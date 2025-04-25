@@ -1,0 +1,115 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}
+
+.jumbotron {
+  background-image: url("/BE_Proj/assets/img/background.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: space-evenly;
+  padding: 100px 0;
+  background-color: #eee;
+}
+
+.top-right {
+  display: flex;
+  flex-direction: column;
+  gap: 100px;
+}
+
+.ask {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: white;
+  padding: 30px 15px;
+  width: 300px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.title {
+  font-weight: bold;
+}
+
+.text-gray {
+  color: #888;
+}
+
+.middle {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.middle-img {
+  display: flex;
+  gap: 20px;
+}
+
+.img {
+  width: 350px;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ccc;
+  border-radius: 5px;
+}
+
+.img1 {
+  background-image: url("/BE_Proj/assets/img/travel_1.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+.img2 {
+  background-image: url("/BE_Proj/assets/img/travel_2.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+.img3 {
+  background-image: url("/BE_Proj/assets/img/travel_3.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+.myplan {
+  background-color: #eee;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.carousel-inner {
+  display: flex;
+  justify-content: center;
+}
+
+.carousel-item {
+  margin-right: 0 !important;
+  width: 70% !important;
+}
+
+.item {
+  display: flex;
+  gap: 20px;
+}
+
+.carousel-indicators {
+  margin-top: 20px;
+  position: relative !important;
+  gap: 10px;
+}
+
+.carousel-btn {
+  background-color: #888 !important;
+  width: 6px !important;
+  height: 6px !important;
+}
