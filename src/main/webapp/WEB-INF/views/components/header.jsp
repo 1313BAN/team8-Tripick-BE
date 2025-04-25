@@ -21,21 +21,17 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
       <a href="${pageContext.request.contextPath}/board?action=list">여행정보공유</a>
 
       <!-- ✅ 로그인 전 -->
-      <c:if test="${empty sessionScope.loginUser}">
-        <a type="button" data-bs-toggle="modal" data-bs-target="#exampleModal"
-          >회원가입</a
-        >
-        <a type="button" data-bs-toggle="modal" data-bs-target="#signinModal"
-          >로그인</a
-        >
-      </c:if>
+<c:if test="${empty sessionScope.loginMember}">
+    <a type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">회원가입</a>
+    <a type="button" data-bs-toggle="modal" data-bs-target="#signinModal">로그인</a>
+</c:if>
 
-      <!-- ✅ 로그인 후 -->
-      <c:if test="${not empty sessionScope.loginUser}">
-        <span id="userNameDisplay">${sessionScope.loginUser.username}님</span>
-        <a href="${pageContext.request.contextPath}/main?action=mypage">마이페이지</a>
-        <a href="<%=request.getContextPath() %>/main?action=logout">로그아웃</a>
-      </c:if>
+<!-- ✅ 로그인 후 -->
+<c:if test="${not empty sessionScope.loginMember}">
+    <span id="userNameDisplay">${sessionScope.loginMember.username}님</span>
+    <a href="${pageContext.request.contextPath}/member/detail?email=${sessionScope.loginMember.email}">마이페이지</a>
+    <a href="${pageContext.request.contextPath}/member/logout">로그아웃</a>
+</c:if>
 
       <!-- Modal -->
       <div
@@ -48,7 +44,7 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
         <div class="modal-dialog">
           <div class="modal-content">
             <form
-              action="<%=request.getContextPath()%>/main?action=join"
+              action="<%=request.getContextPath()%>/member/register"
               method="post"
             >
               <div class="modal-header">
@@ -157,7 +153,7 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
         <div class="modal-dialog">
           <div class="modal-content">
             <form
-              action="<%=request.getContextPath()%>/main?action=login"
+              action="<%=request.getContextPath()%>/member/login"
               method="post"
             >
               <div class="modal-header">
