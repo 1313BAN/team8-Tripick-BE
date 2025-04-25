@@ -49,7 +49,9 @@ public class MemberController {
     public ModelAndView detail(@RequestParam("email") String email) throws Exception {
         ModelAndView mav = new ModelAndView();
         mav.setViewName("member/detail");   // JSP 경로도 member 기준
+        System.out.println("++++++++++++++++++++++++++++++++++" + memberService.findByEmail(email).getCreatedAt());
         mav.addObject("member", memberService.findByEmail(email));
+        System.out.println(mav.getModel().get("member"));
         return mav;
     }
     
@@ -64,6 +66,14 @@ public class MemberController {
         memberService.addMember(user);
         rAttr.addFlashAttribute("msg", "회원가입이 완료되었습니다. 로그인 해주세요!");
         return "redirect:/";
+    }
+    
+    @GetMapping("/modifyForm")
+    public ModelAndView modifyForm(@RequestParam("email") String email) throws Exception {
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("member/modifyForm");  // JSP 경로
+        mav.addObject("member", memberService.findByEmail(email));  // 기존 회원정보 조회
+        return mav;
     }
     
     @PostMapping("/modify")

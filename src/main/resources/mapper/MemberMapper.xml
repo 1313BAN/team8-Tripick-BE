@@ -40,7 +40,7 @@
 
     <!-- Find by Email -->
     <select id="findByEmail" resultType="com.ssafy.live.model.dto.MemberDto">
-        SELECT id, username, email, password, phone, created_at
+        SELECT id, username, email, password, phone, created_at as createdAt
         FROM members
         WHERE email = #{email}
     </select>
