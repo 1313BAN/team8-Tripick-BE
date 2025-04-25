@@ -7,7 +7,7 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
     <!-- 왼쪽 로고 -->
     <a href="index.jsp" class="header-brand d-flex align-items-center">
       <img
-        src="./assets/img/header_4.png"
+        src="${pageContext.request.contextPath}/assets/img/header_4.png"
         alt="Album Logo"
         class="header-logo"
       />

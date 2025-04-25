@@ -14,9 +14,9 @@
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
 
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="./assets/css/header.css" />
-  <link rel="stylesheet" href="./assets/css/footer.css" />
-  <link rel="stylesheet" href="./assets/css/travel-information.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/header.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/footer.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/travel-information.css" />
 
   <!-- jQuery -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"
@@ -61,16 +61,20 @@
 
     <!-- 지도 -->
     <div id="map"></div>
+
+	<div id="spot-detail" class="spot-detail-box"></div>
+
   </main>
+
 
   <%-- 공통 푸터 include --%>
   <jsp:include page="components/footer.jsp" />
 
   <!-- JS 파일 로드 -->
-  <script src="./assets/js/keys.js"></script>
-  <script src="./assets/js/common.js"></script>
-  <script src="./assets/js/enjoytrip.js"></script>
-  <script src="./assets/js/kostat.js"></script>
+  <script src="${pageContext.request.contextPath}/assets/js/keys.js"></script>
+  <script src="${pageContext.request.contextPath}/assets/js/common.js"></script>
+  <script src="${pageContext.request.contextPath}/assets/js/enjoytrip.js"></script>
+  <script src="${pageContext.request.contextPath}/assets/js/kostat.js"></script>
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
