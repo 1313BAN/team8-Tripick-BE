@@ -5,7 +5,7 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div class="navbar navbar-light bg-light">
   <div class="container-fluid header-container">
     <!-- 왼쪽 로고 -->
-    <a href="index.jsp" class="header-brand d-flex align-items-center">
+    <a href="${pageContext.request.contextPath}/" class="header-brand d-flex align-items-center">
       <img
         src="${pageContext.request.contextPath}/assets/img/header_4.png"
         alt="Album Logo"

@@ -5,7 +5,7 @@
 }
 
 .jumbotron {
-  background-image: url("/BE_Proj/assets/img/background.jpg");
+  background-image: url("/assets/img/background.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -61,19 +61,19 @@
 }
 
 .img1 {
-  background-image: url("/BE_Proj/assets/img/travel_1.jpg");
+  background-image: url("/assets/img/travel_1.jpg");
   background-size: cover;
   background-position: center;
 }
 
 .img2 {
-  background-image: url("/BE_Proj/assets/img/travel_2.jpg");
+  background-image: url("/assets/img/travel_2.jpg");
   background-size: cover;
   background-position: center;
 }
 
 .img3 {
-  background-image: url("/BE_Proj/assets/img/travel_3.jpg");
+  background-image: url("/assets/img/travel_3.jpg");
   background-size: cover;
   background-position: center;
 }
