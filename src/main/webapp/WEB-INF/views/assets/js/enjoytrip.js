@@ -125,7 +125,7 @@ const handleContentTypeChange = async (e) => {
             element.address = element.addr1;
             element.label = element.title;
         });
-
+		console.log("ㅔㅔㅔㅔ" + spots[0]);
         console.log(spots);
         updateMap(spots);
 

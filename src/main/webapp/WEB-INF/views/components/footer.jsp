@@ -4,7 +4,7 @@
     <!-- 왼쪽 이미지 -->
     <div class="col-md-3 text-start">
       <img
-        src="./assets/img/footer_ssafy-logo-black.b301994e.png"
+        src="${pageContext.request.contextPath}/assets/img/footer_ssafy-logo-black.b301994e.png"
         alt="Company Logo"
         class="footer-logo"
       />
@@ -13,22 +13,22 @@
     <!-- 오른쪽 가로 4개 이미지 -->
     <div class="col-md-6 d-flex justify-content-end gap-3">
       <img
-        src="./assets/img/footer_ssafy-logo-small.bd603755.png"
+        src="${pageContext.request.contextPath}/assets/img/footer_ssafy-logo-small.bd603755.png"
         alt="Image 1"
         class="footer-img"
       />
       <img
-        src="./assets/img/footer_mcst-logo.86700cdd.png"
+        src="${pageContext.request.contextPath}/assets/img/footer_mcst-logo.86700cdd.png"
         alt="Image 2"
         class="footer-img"
       />
       <img
-        src="./assets/img/footer_tour-api-logo.ebcb1140.png"
+        src="${pageContext.request.contextPath}/assets/img/footer_tour-api-logo.ebcb1140.png"
         alt="Image 3"
         class="footer-img"
       />
       <img
-        src="./assets/img/footer_visit-korea-logo.858325ef.png"
+        src="${pageContext.request.contextPath}/assets/img/footer_visit-korea-logo.858325ef.png"
         alt="Image 4"
         class="footer-img"
       />

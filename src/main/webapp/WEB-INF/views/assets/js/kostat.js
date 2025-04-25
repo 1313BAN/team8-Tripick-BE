@@ -157,9 +157,21 @@ const updateMap = (infos) => {
       infoWindow.setContent(infoWindowContent);
 
       // 마커 클릭 시 인포윈도우 표시
-      marker.on("click", () => {
-        infoWindow.setUTMK([info.utmk.x, info.utmk.y]);
-        infoWindow.openOn(map);
+	  marker.on("click", () => {
+		console.log("클릭함")
+	    infoWindow.setUTMK([info.utmk.x, info.utmk.y]);
+	    infoWindow.openOn(map);
+
+	    const detailBox = document.querySelector("#spot-detail");
+	    if (detailBox) {
+	      detailBox.innerHTML = `
+	        <h4>${info.label}</h4>
+	        <p><strong>주소:</strong> ${info.address || '주소 정보 없음'}</p>
+	        <p><strong>전화번호:</strong> ${info.tel || '전화번호 없음'}</p>
+	        <p><strong>우편번호:</strong> ${info.zipcode || '우편번호 없음'}</p>
+	        ${info.firstimage ? `<img src="${info.firstimage}" alt="${info.label}" style="max-width: 100%; margin-top: 10px;">` : ''}
+	      `;
+	    }
       });
 
       // 마커와 경계 정보 저장
