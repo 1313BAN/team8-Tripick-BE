@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.live.model.dao.SpotDao">
+
+    <resultMap id="SpotMap" type="com.ssafy.live.model.dto.SpotDto">
+        <!-- 기본 키 필드 매핑 (프라이머리 키) -->
+        <id property="no" column="no" />
+        
+        <!-- 일반 필드 매핑 (property: 자바 객체 필드명, column: DB 컬럼명) -->
+        <result property="contentId" column="content_id" />
+        <result property="title" column="title" />
+        <result property="contentTypeId" column="content_type_id" />
+        <result property="areaCode" column="area_code" />
+        <result property="siGunGuCode" column="si_gun_gu_code" />
+        <result property="firstImage1" column="first_image1" />
+        <result property="firstImage2" column="first_image2" />
+        <result property="mapLevel" column="map_level" />
+        <result property="latitude" column="latitude" />
+        <result property="longitude" column="longitude" />
+        <result property="tel" column="tel" />
+        <result property="addr1" column="addr1" />
+        <result property="addr2" column="addr2" />
+        <result property="homepage" column="homepage" />
+        <result property="overview" column="overview" />
+    </resultMap>
+
+    <!-- 이번주 인기 관광지 20개 조회 -->
+    <select id="selectTopWeeklySpots" parameterType="java.util.Date" resultMap="SpotMap">
+        SELECT
+            a.no,              /* 관광지 ID */
+            a.content_id,      /* 콘텐츠 ID */
+            a.title,           /* 관광지 제목 */
+            a.content_type_id, /* 콘텐츠 타입 ID */
+            a.area_code,       /* 지역 코드 */
+            a.si_gun_gu_code,  /* 시군구 코드 */
+            a.first_image1,    /* 대표 이미지 1 */
+            a.first_image2,    /* 대표 이미지 2 */
+            a.map_level,       /* 지도 레벨 */
+            a.latitude,        /* 위도 */
+            a.longitude,       /* 경도 */
+            a.tel,             /* 전화번호 */
+            a.addr1,           /* 주소 1 */
+            a.addr2,           /* 주소 2 */
+            a.homepage,        /* 홈페이지 URL */
+            a.overview         /* 개요 */
+        FROM
+            ssafytrip.spots a
+        JOIN
+            spot_like sl ON a.no = sl.spot_id
+        WHERE
+            sl.created_at >= #{startDate}
+        GROUP BY
+            a.no
+        ORDER BY
+            COUNT(sl.user_id) DESC,
+            a.no
+        LIMIT 20
+    </select>
+
+</mapper>
