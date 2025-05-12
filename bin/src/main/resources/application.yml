@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: enjoytrip_08
+
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ssafytrip
+    username: ssafy
+    password: ssafy
+    hikari:
+      idle-timeout: 300000
+      minimum-idle: 3
+      maximum-pool-size: 5
+      connection-timeout: 600000
+
+mybatis:
+  mapper-locations: classpath:/domain/**/mapper/*.xml
+  type-aliases-package: com.ssafy.live.**.dto
+
+jwt:
+  secret: S!f9@F3#k2zPq8LuBxM9rH7eT6aWvYu1
+
+logging:
+  level:
+    com.ssafy: trace

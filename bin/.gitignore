@@ -1,0 +1,42 @@
+# === Build ===
+target/
+build/
+
+# === Maven Wrapper ===
+!.mvn/wrapper/maven-wrapper.jar
+
+# === IDEs ===
+
+## STS / Eclipse
+.apt_generated/
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans/
+.sts4-cache/
+
+## IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+
+## VS Code
+.vscode/
+
+# === OS Files ===
+.DS_Store
+Thumbs.db
+
+# === Logs ===
+*.log
+logs/
+
+# === Environment / Config ===
+.env
+application-local.yml
+application-dev.yml
+
+# === Documentation ===
+HELP.md
