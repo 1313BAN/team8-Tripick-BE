@@ -1,6 +1,5 @@
-package com.ssafy.live.model.service;
+package com.ssafy.live.domain.spot.service;
 
-import java.sql.Connection;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -10,8 +9,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.ssafy.live.model.dao.SpotDao;
-import com.ssafy.live.model.dto.SpotDto;
+import com.ssafy.live.domain.spot.dao.SpotDao;
+import com.ssafy.live.domain.spot.dto.SpotDto;
+
 import lombok.RequiredArgsConstructor;
 
 @Service

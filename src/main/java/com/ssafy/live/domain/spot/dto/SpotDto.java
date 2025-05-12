@@ -1,10 +1,8 @@
-package com.ssafy.live.model.dto;
+package com.ssafy.live.domain.spot.dto;
 
 
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.util.List;
 
 import lombok.Data;
 
