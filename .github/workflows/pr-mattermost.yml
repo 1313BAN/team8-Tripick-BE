@@ -2,7 +2,7 @@ name: PR Notification to Mattermost
 
 on:
   pull_request:
-    types: [opened, reopened]  # PR 생성 또는 다시 열릴 때 작동
+    types: [opened, reopened]
 
 jobs:
   notify:
@@ -11,8 +11,9 @@ jobs:
     steps:
       - name: Send PR to Mattermost
         run: |
-          curl -X POST -H 'Content-Type: application/json' \
-          -d '{
-                "text": ":bell: Pull Request 생성됨!\n> 제목: '${{ github.event.pull_request.title }}'\n> 작성자: '${{ github.actor }}'\n> 링크: '${{ github.event.pull_request.html_url }}'"
-              }' \
-          ${{ secrets.MATTERMOST_WEBHOOK_URL }}
+          curl -X POST -H "Content-Type: application/json" \
+          -d @- ${{ secrets.MATTERMOST_WEBHOOK_URL }} <<EOF
+{
+  "text": ":bell: Pull Request 생성됨!\n> 제목: \"${{ github.event.pull_request.title }}\"\n> 작성자: \"${{ github.actor }}\"\n> 링크: \"${{ github.event.pull_request.html_url }}\""
+}
+EOF
