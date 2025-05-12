@@ -29,6 +29,7 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<Void> signup(@RequestBody SignupRequestDto request) {
+    	
         userService.signup(request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
