@@ -16,13 +16,14 @@
         <result property="role" column="role" />
         <result property="bio" column="bio" />
         <result property="gender" column="gender" />
+        <result property="age" column="age" />
     </resultMap>
 
     <!-- 회원 가입 -->
     <insert id="insertUser">
-        INSERT INTO users (email, password, nickname, name, gender, role)
-        VALUES (#{email}, #{password}, #{nickname}, #{name}, #{gender}, #{role})
-    </insert>
+	    INSERT INTO users (email, password, nickname, name, gender, role, age)
+	    VALUES (#{email}, #{password}, #{nickname}, #{name}, #{gender}, #{role}, #{age})
+	</insert>
 
     <!-- 이메일로 사용자 조회 -->
     <select id="findByEmail" resultMap="UserMap">
@@ -35,17 +36,18 @@
     </select>
 
 	<update id="updateUser">
-        UPDATE users
-        SET
-            nickname = #{nickname},
-            name = #{name},
-            profile_image = #{profileImage},
-            role = #{role},
-            bio = #{bio},
-            gender = #{gender},
-            updated_at = CURRENT_TIMESTAMP
-        WHERE id = #{id}
-    </update>
+	    UPDATE users
+	    SET
+	        nickname = #{nickname},
+	        name = #{name},
+	        profile_image = #{profileImage},
+	        role = #{role},
+	        bio = #{bio},
+	        gender = #{gender},
+	        age = #{age},
+	        updated_at = CURRENT_TIMESTAMP
+	    WHERE id = #{id}
+	</update>
 
     <delete id="deleteUser">
         DELETE FROM users WHERE id = #{id}

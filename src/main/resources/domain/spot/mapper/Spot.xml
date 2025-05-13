@@ -27,6 +27,100 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="overview" column="overview" />
     </resultMap>
 
+
+	<!-- 모든 관광지 조회 -->
+	<select id="selectAllSpots" resultMap="SpotMap">
+	    SELECT
+	        no,
+	        content_id,
+	        title,
+	        content_type_id,
+	        area_code,
+	        si_gun_gu_code,
+	        first_image1,
+	        first_image2,
+	        map_level,
+	        latitude,
+	        longitude,
+	        tel,
+	        addr1,
+	        addr2,
+	        homepage,
+	        overview
+	    FROM
+	        ssafytrip.spots
+	    ORDER BY
+	        no
+	</select>
+	
+	<!-- 특정 관광지 조회 (no 기준) -->
+	<select id="selectSpotByNo" parameterType="int" resultMap="SpotMap">
+	    SELECT
+	        no,
+	        content_id,
+	        title,
+	        content_type_id,
+	        area_code,
+	        si_gun_gu_code,
+	        first_image1,
+	        first_image2,
+	        map_level,
+	        latitude,
+	        longitude,
+	        tel,
+	        addr1,
+	        addr2,
+	        homepage,
+	        overview
+	    FROM
+	        ssafytrip.spots
+	    WHERE
+	        no = #{no}
+	</select>
+
+	<!-- 관광지 등록 -->
+	<insert id="insertSpot" parameterType="com.ssafy.live.domain.spot.dto.SpotDto" useGeneratedKeys="true" keyProperty="no">
+	    INSERT INTO ssafytrip.spots (
+	        content_id,
+	        title,
+	        content_type_id,
+	        area_code,
+	        si_gun_gu_code,
+	        first_image1,
+	        first_image2,
+	        map_level,
+	        latitude,
+	        longitude,
+	        tel,
+	        addr1,
+	        addr2,
+	        homepage,
+	        overview
+	    ) VALUES (
+	        #{contentId},
+	        #{title},
+	        #{contentTypeId},
+	        #{areaCode},
+	        #{siGunGuCode},
+	        #{firstImage1},
+	        #{firstImage2},
+	        #{mapLevel},
+	        #{latitude},
+	        #{longitude},
+	        #{tel},
+	        #{addr1},
+	        #{addr2},
+	        #{homepage},
+	        #{overview}
+	    )
+	</insert>
+	
+		<!-- 관광지 삭제 -->
+	<delete id="deleteSpot" parameterType="int">
+	    DELETE FROM ssafytrip.spots
+	    WHERE no = #{no}
+	</delete>
+
     <!-- 이번주 인기 관광지 20개 조회 -->
     <select id="selectTopWeeklySpots" parameterType="java.util.Date" resultMap="SpotMap">
         SELECT

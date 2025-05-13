@@ -1,7 +1,6 @@
 package com.ssafy.live.security.jwt;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.Date;
 
 import javax.crypto.SecretKey;
@@ -11,6 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import com.ssafy.live.domain.user.dto.UserDto;
 import com.ssafy.live.security.auth.CustomUserDetails;
 
 import io.jsonwebtoken.Claims;
@@ -29,59 +29,66 @@ public class JwtTokenProvider {
 
     private final long tokenValidTime = 1000L * 60 * 60; // 1시간
 
-
     @PostConstruct
     public void init() {
-        secretKey = Keys.hmacShaKeyFor(
-            Base64.getEncoder().encodeToString(rawSecret.getBytes(StandardCharsets.UTF_8)).getBytes(StandardCharsets.UTF_8)
-        );
+        this.secretKey = Keys.hmacShaKeyFor(rawSecret.getBytes(StandardCharsets.UTF_8));
     }
 
-
-    public String createToken(String email, String role) {
+    // ✅ 유저 정보를 기반으로 JWT 생성
+    public String createToken(UserDto user) {
         Date now = new Date();
-        Date validity = new Date(now.getTime() + tokenValidTime);
+        Date expiry = new Date(now.getTime() + tokenValidTime);
 
         return Jwts.builder()
-            .subject(email)
-            .claim("role", role)
-            .issuedAt(now)
-            .expiration(validity)
-            .signWith(secretKey, Jwts.SIG.HS256)
-            .compact();
+                .subject(user.getEmail())                      // sub
+                .claim("id", user.getId())                     // 유저 ID
+                .claim("role", user.getRole())                 // 권한
+                .issuedAt(now)
+                .expiration(expiry)
+                .signWith(secretKey, Jwts.SIG.HS256)
+                .compact();
     }
 
-
+    // ✅ JWT → Authentication 객체로 변환
     public Authentication getAuthentication(String token) {
-        String email = getEmail(token);
-        CustomUserDetails userDetails = new CustomUserDetails(email);
+        Claims claims = getClaims(token);
+        String email = claims.getSubject();
+        String role = claims.get("role", String.class);
+        Integer id = claims.get("id", Integer.class);
+
+        CustomUserDetails userDetails = new CustomUserDetails(id, email, null, role); // ✅ id 포함
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    public String getEmail(String token) {
-        Claims claims = Jwts.parser()
-            .verifyWith(secretKey)
-            .build()
-            .parseSignedClaims(token)
-            .getPayload();
-
-        return claims.getSubject();
-    }
-
-
-    public boolean validateToken(String token) {
-        try {
-            Claims claims = Jwts.parser()
-                .verifyWith(secretKey) // ✅ only one argument
+    // ✅ JWT 파싱해서 Claims 추출
+    private Claims getClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(secretKey)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+    }
 
-            return !claims.getExpiration().before(new Date());
+    // ✅ 유효성 검사
+    public boolean validateToken(String token) {
+        try {
+            Date expiration = getClaims(token).getExpiration();
+            return expiration.after(new Date());
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
     }
 
+    // ✅ 클레임에서 개별 필드 추출 (Optional)
+    public String getEmail(String token) {
+        return getClaims(token).getSubject();
+    }
 
+    public String getRole(String token) {
+        return getClaims(token).get("role", String.class);
+    }
+
+    public Integer getUserId(String token) {
+        return getClaims(token).get("id", Integer.class);
+    }
 }
