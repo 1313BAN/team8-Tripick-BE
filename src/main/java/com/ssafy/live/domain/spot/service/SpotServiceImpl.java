@@ -23,12 +23,24 @@ public class SpotServiceImpl implements SpotService {
     
 	private final SpotDao spotDao;
 	
+    /**
+     * Retrieves a list of all tourist spots.
+     *
+     * @return a list containing all tourist spots
+     */
     @Override
     @Transactional(readOnly = true)
     public List<SpotDto> getAllSpots() {
         return spotDao.selectAllSpots();
     }
     
+    /**
+     * Retrieves a tourist spot by its identifier.
+     *
+     * @param no the unique identifier of the tourist spot
+     * @return the corresponding SpotDto if found
+     * @throws NoSuchElementException if no spot exists with the given identifier
+     */
     @Override
     @Transactional(readOnly = true)
     public SpotDto getSpotByNo(int no) {
@@ -39,6 +51,12 @@ public class SpotServiceImpl implements SpotService {
         return spot;
     }
     
+    /**
+     * Deletes a tourist spot by its identifier.
+     *
+     * @param no the unique identifier of the spot to delete
+     * @throws NoSuchElementException if the spot does not exist
+     */
     @Override
     @Transactional
     public void deleteSpot(int no) {
@@ -50,6 +68,15 @@ public class SpotServiceImpl implements SpotService {
         spotDao.deleteSpot(no);
     }
     
+    /**
+     * Creates a new tourist spot and returns its details.
+     *
+     * Inserts a new spot using the provided data. If the insertion fails, a {@code RuntimeException} is thrown.
+     *
+     * @param spotDto the data for the new tourist spot
+     * @return the created tourist spot, including its generated identifier
+     * @throws RuntimeException if the spot could not be created
+     */
     @Override
     @Transactional
     public SpotDto createSpot(SpotDto spotDto) {
@@ -66,6 +93,11 @@ public class SpotServiceImpl implements SpotService {
     }
     
 	
+    /**
+     * Retrieves a list of the top tourist spots for the current week, starting from the most recent Monday.
+     *
+     * @return a list of top weekly tourist spots since the start of the current week
+     */
     public List<SpotDto> getTopWeeklySpots() {
         LocalDateTime startOfWeek = LocalDateTime.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         Date startDate = Date.from(startOfWeek.atZone(ZoneId.systemDefault()).toInstant());

@@ -30,7 +30,11 @@ public class SpotController {
 	private final SpotService spotService;
 	
 	
-    // 모든 관광지 조회
+    /**
+     * Retrieves a list of all tourist spots.
+     *
+     * @return a ResponseEntity containing a list of SpotDto objects and HTTP 200 OK status
+     */
     @GetMapping
     public ResponseEntity<List<SpotDto>> getAllSpots() {
         List<SpotDto> spots = spotService.getAllSpots();
@@ -38,21 +42,36 @@ public class SpotController {
     }
     
 
-    // ID로 특정 관광지 조회
+    /**
+     * Retrieves a tourist spot by its unique identifier.
+     *
+     * @param no the unique identifier of the tourist spot
+     * @return the tourist spot data with HTTP 200 OK if found
+     */
     @GetMapping("/{no}")
     public ResponseEntity<SpotDto> getSpotByNo(@PathVariable int no) {
         SpotDto spot = spotService.getSpotByNo(no);
         return new ResponseEntity<>(spot, HttpStatus.OK);
     }
     
-    // 관광지 삭제
+    /**
+     * Deletes the tourist spot identified by the given ID.
+     *
+     * @param no the unique identifier of the tourist spot to delete
+     * @return HTTP 204 No Content if the deletion is successful
+     */
     @DeleteMapping("/{no}")
     public ResponseEntity<Void> deleteSpot(@PathVariable int no) {
         spotService.deleteSpot(no);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     
-    // 새 관광지 생성
+    /**
+     * Creates a new tourist spot using the provided data.
+     *
+     * @param spotDto the data for the new tourist spot
+     * @return the created tourist spot with HTTP 201 Created status
+     */
     @PostMapping
     public ResponseEntity<SpotDto> createSpot(@RequestBody SpotDto spotDto) {
         SpotDto createdSpot = spotService.createSpot(spotDto);
@@ -60,7 +79,14 @@ public class SpotController {
     }
     
     
-	// 
+	/**
+	 * Retrieves the top weekly popular tourist spots.
+	 *
+	 * Returns a JSON response containing a success status, message, and a list of the top weekly spots on success,
+	 * or an error message with failure status on error.
+	 *
+	 * @return a ResponseEntity with a JSON body indicating success or failure and the corresponding data or error message
+	 */
 	@GetMapping("/top-weekly")
 	public ResponseEntity<?> receiveSpot() {
 		

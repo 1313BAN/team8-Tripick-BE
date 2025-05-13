@@ -10,14 +10,43 @@ import com.ssafy.live.domain.spot.dto.SpotDto;
 @Mapper
 public interface SpotDao {
 	
-    List<SpotDto> selectAllSpots();
+    /**
+ * Retrieves a list of all spots.
+ *
+ * @return a list containing all SpotDto objects
+ */
+List<SpotDto> selectAllSpots();
 	
-    SpotDto selectSpotByNo(int no);
+    /****
+ * Retrieves a spot record by its unique identifier.
+ *
+ * @param no the unique identifier of the spot
+ * @return the corresponding SpotDto, or null if not found
+ */
+SpotDto selectSpotByNo(int no);
     
-    int insertSpot(SpotDto spotDto);
+    /****
+ * Inserts a new spot record into the database.
+ *
+ * @param spotDto the spot data to insert
+ * @return the number of rows affected by the insert operation
+ */
+int insertSpot(SpotDto spotDto);
     
-    int deleteSpot(int no);
+    /****
+ * Deletes the spot record with the specified identifier.
+ *
+ * @param no the unique identifier of the spot to delete
+ * @return the number of records deleted (typically 1 if successful, 0 if not found)
+ */
+int deleteSpot(int no);
     
-	List<SpotDto> selectTopWeeklySpots(Date startDate);
+	/**
+ * Retrieves a list of the top weekly spots starting from the specified date.
+ *
+ * @param startDate the date from which the weekly period begins
+ * @return a list of top weekly spots
+ */
+List<SpotDto> selectTopWeeklySpots(Date startDate);
 	
 }

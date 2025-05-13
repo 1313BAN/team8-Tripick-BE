@@ -6,18 +6,40 @@ import java.util.List;
 import com.ssafy.live.domain.spot.dto.SpotDto;
 
 public interface SpotService {
-    // 모든 관광지 조회
+    /**
+ * Retrieves a list of all tourist spots.
+ *
+ * @return a list of all tourist spots as SpotDto objects
+ */
     List<SpotDto> getAllSpots();
     
-    // no로 특정 관광지 조회
+    /****
+ * Retrieves a tourist spot by its unique identifier.
+ *
+ * @param no the unique identifier of the tourist spot
+ * @return the corresponding SpotDto if found
+ */
     SpotDto getSpotByNo(int no);
     
-    // 관광지 삭제
+    /**
+ * Deletes a tourist spot identified by its unique number.
+ *
+ * @param no the unique identifier of the tourist spot to delete
+ */
     void deleteSpot(int no);
     
-    // 새 관광지 생성
+    /**
+ * Creates a new tourist spot using the provided data.
+ *
+ * @param spotDto the data for the tourist spot to be created
+ * @return the created tourist spot
+ */
     SpotDto createSpot(SpotDto spotDto);
     
-    // 이번주 인기 관광지 조회
+    /****
+ * Retrieves a list of the most popular tourist spots for the current week.
+ *
+ * @return a list of SpotDto objects representing the top tourist spots of the week
+ */
     List<SpotDto> getTopWeeklySpots();
 }
