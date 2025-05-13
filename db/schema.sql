@@ -13,3 +13,15 @@ CREATE TABLE IF NOT EXISTS users (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
+
+
+-- 관광지 좋아요 테이블 (spot_like)
+CREATE TABLE IF NOT EXISTS spot_like (
+    spot_id INT,
+    user_id INT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (spot_id, user_id),
+    FOREIGN KEY (user_id) REFERENCES user(user_id),
+    FOREIGN KEY (spot_id) REFERENCES ssafytrip.attractions(no)
+);
