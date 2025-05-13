@@ -9,5 +9,15 @@ import com.ssafy.live.domain.spot.dto.SpotDto;
 
 @Mapper
 public interface SpotDao {
+	
+    List<SpotDto> selectAllSpots();
+	
+    SpotDto selectSpotByNo(int no);
+    
+    int insertSpot(SpotDto spotDto);
+    
+    int deleteSpot(int no);
+    
 	List<SpotDto> selectTopWeeklySpots(Date startDate);
+	
 }
