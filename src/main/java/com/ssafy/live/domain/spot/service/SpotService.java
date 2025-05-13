@@ -16,7 +16,7 @@ public interface SpotService {
     void deleteSpot(int no);
     
     // 새 관광지 생성
-    SpotDto createSpot(SpotDto spotDto);
+    SpotDto insertSpot(SpotDto spotDto);
     
     // 이번주 인기 관광지 조회
     List<SpotDto> getTopWeeklySpots();

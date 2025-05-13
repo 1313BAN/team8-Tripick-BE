@@ -52,7 +52,7 @@ public class SpotServiceImpl implements SpotService {
     
     @Override
     @Transactional
-    public SpotDto createSpot(SpotDto spotDto) {
+    public SpotDto insertSpot(SpotDto spotDto) {
         // SpotDao를 통해 새 관광지 생성
         int result = spotDao.insertSpot(spotDto);
         
@@ -75,3 +75,4 @@ public class SpotServiceImpl implements SpotService {
 
     
 }
+
