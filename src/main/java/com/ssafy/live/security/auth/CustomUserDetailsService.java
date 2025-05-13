@@ -17,11 +17,11 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserDao userDao;
 
     @Override
-    public UserDetails loadUserByUsername(String email) {
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         UserDto user = userDao.findByEmail(email);
         if (user == null) {
-            throw new UsernameNotFoundException("User not found");
+            throw new UsernameNotFoundException("유저를 찾을 수 없습니다: " + email);
         }
-        return new CustomUserDetails(user.getEmail());
+        return new CustomUserDetails(user.getId(), user.getEmail(), user.getPassword(), user.getRole());
     }
 }
