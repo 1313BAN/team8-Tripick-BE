@@ -39,8 +39,8 @@ public class ReviewController {
     public ResponseEntity<?> createReview(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody ReviewRequestDto reviewRequestDto) {
-        
-        int userId = Integer.parseInt(userDetails.getUsername());
+        // 재윤이형한테 id도 넣어달라고 하기
+        int userId = Integer.parseInt(userDetails.);
         ReviewResponseDto responseDto = reviewService.createReview(userId, reviewRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }

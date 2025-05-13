@@ -1,6 +1,20 @@
 package com.ssafy.live.domain.review.service;
 
+import java.util.List;
+import java.util.NoSuchElementException;
+
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ssafy.live.domain.review.dao.ReviewDao;
+import com.ssafy.live.domain.review.dto.ReviewRequestDto;
+import com.ssafy.live.domain.review.dto.ReviewResponseDto;
+import com.ssafy.live.domain.spot.dao.SpotDao;
+import com.ssafy.live.domain.spot.dto.SpotDto;
+import com.ssafy.live.domain.spot.service.SpotService; 
+import com.ssafy.live.domain.user.dao.UserDao;
+import com.ssafy.live.domain.user.dto.UserDto;
+import com.ssafy.live.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -9,124 +23,122 @@ import lombok.RequiredArgsConstructor;
 public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewDao reviewDao;
-    private final UserDao userDao; // 필요한 경우 사용자 정보를 조회하기 위한 DAO
-    private final SpotDao spotDao; // 필요한 경우 관광지 정보를 조회하기 위한 DAO
-
+    private final UserDao userDao;
+    private final SpotDao spotDao;
+    
+    // 리뷰 작성
     @Override
-    public ReviewResponseDto createReview(ReviewRequestDto requestDto, Long userId) {
-        // 요청 DTO를 바로 MyBatis에 전달
-        ReviewResponseDto responseDto = new ReviewResponseDto();
-        responseDto.setUserId(userId);
-        responseDto.setSpotId(requestDto.getSpotId());
-        responseDto.setRating(requestDto.getRating());
-        responseDto.setContent(requestDto.getContent());
-        responseDto.setTitle(requestDto.getTitle());
-        responseDto.setReviewLike(0); // 초기 좋아요 수는 0
-        
-        // DAO를 통해 DB에 저장
-        reviewDao.insertReview(responseDto); // 이 메소드는 ID를 설정함
-        
-        // 추가 정보 설정 (사용자 이름, 관광지 이름 등)
-        enrichResponseDto(responseDto);
-        
-        return responseDto;
-    }
-
-    @Override
-    public ReviewResponseDto updateReview(Long reviewId, ReviewRequestDto requestDto, Long userId) {
-        // 리뷰 소유자 확인
-        if (!reviewDao.isReviewOwner(reviewId, userId)) {
-            throw new AccessDeniedException("해당 리뷰를 수정할 권한이 없습니다.");
+    @Transactional
+    public ReviewResponseDto createReview(int userId, ReviewRequestDto reviewRequestDto) {
+        // 사용자 존재 확인 및 정보 가져오기
+        UserDto user = userDao.findById(userId);
+        if (user == null) {
+            throw new NoSuchElementException("존재하지 않는 사용자입니다.");
         }
-        
-        // 기존 리뷰 조회
+
+        // 관광지 존재 확인
+        SpotDto spot = spotDao.selectSpotByNo(reviewRequestDto.getSpotId());
+        if (spot == null) {
+            throw new NoSuchElementException("존재하지 않는 관광지입니다.");
+        }
+
+        // 리뷰 정보 설정
+        ReviewResponseDto reviewDto = new ReviewResponseDto();
+        reviewDto.setUserId(userId);
+        reviewDto.setUsername(user.getName()); // 사용자 이름 설정
+        reviewDto.setUser(user); // 사용자 전체 정보 설정
+        reviewDto.setSpotId(reviewRequestDto.getSpotId());
+        reviewDto.setSpotName(spot.getTitle()); // 관광지 이름 설정
+        reviewDto.setRating(reviewRequestDto.getRating());
+        reviewDto.setTitle(reviewRequestDto.getTitle());
+        reviewDto.setContent(reviewRequestDto.getContent());
+        reviewDto.setReviewLike(0); // 초기 좋아요 수는 0
+
+        // 리뷰 저장
+        reviewDao.insertReview(reviewDto);
+
+        // 저장된 리뷰 조회 (auto-increment된 ID 포함)
+        return reviewDao.selectReviewById(reviewDto.getReviewId());
+    }
+    
+    @Override
+    @Transactional
+    public ReviewResponseDto updateReview(int userId, int reviewId, ReviewRequestDto reviewRequestDto) {
+        // 리뷰 존재 여부 확인
         ReviewResponseDto existingReview = reviewDao.selectReviewById(reviewId);
         if (existingReview == null) {
-            throw new RuntimeException("해당 리뷰를 찾을 수 없습니다: " + reviewId);
+            throw new NoSuchElementException("존재하지 않는 리뷰입니다.");
+        }
+        
+        // 리뷰 작성자와 현재 사용자가 일치하는지 확인
+        int writerId = reviewDao.selectReviewWriterId(reviewId);
+        if (writerId != userId) {
+            throw new SecurityException("리뷰 수정 권한이 없습니다.");
         }
         
         // 리뷰 정보 업데이트
-        existingReview.setRating(requestDto.getRating());
-        existingReview.setContent(requestDto.getContent());
-        existingReview.setTitle(requestDto.getTitle());
-        // spotId는 변경하지 않음 (리뷰가 작성된 관광지는 변경 불가)
+        existingReview.setRating(reviewRequestDto.getRating());
+        existingReview.setTitle(reviewRequestDto.getTitle());
+        existingReview.setContent(reviewRequestDto.getContent());
         
-        // DAO를 통해 DB 업데이트
+        // 리뷰 수정
         reviewDao.updateReview(existingReview);
         
-        // 추가 정보 설정
-        enrichResponseDto(existingReview);
-        
-        return existingReview;
+        // 수정된 리뷰 조회
+        return reviewDao.selectReviewById(reviewId);
     }
-
+    
     @Override
-    public void deleteReview(Long reviewId, Long userId) {
-        // 리뷰 소유자 확인
-        if (!reviewDao.isReviewOwner(reviewId, userId)) {
-            throw new AccessDeniedException("해당 리뷰를 삭제할 권한이 없습니다.");
+    @Transactional
+    public void deleteReview(int userId, int reviewId) {
+        // 리뷰 존재 여부 확인
+        if (reviewDao.selectReviewById(reviewId) == null) {
+            throw new NoSuchElementException("존재하지 않는 리뷰입니다.");
         }
         
-        // DAO를 통해 리뷰 삭제
+        // 리뷰 작성자와 현재 사용자가 일치하는지 확인
+        int writerId = reviewDao.selectReviewWriterId(reviewId);
+        if (writerId != userId) {
+            throw new SecurityException("리뷰 삭제 권한이 없습니다.");
+        }
+        
+        
+        // 리뷰 삭제
         reviewDao.deleteReview(reviewId);
     }
 
     @Override
-    public List<ReviewResponseDto> getAllReviewsBySpotId(Long spotId) {
-        // DAO를 통해 관광지별 리뷰 조회
-        List<ReviewResponseDto> reviews = reviewDao.selectReviewsBySpotId(spotId);
-        
-        // 각 리뷰에 추가 정보 설정
-        reviews.forEach(this::enrichResponseDto);
-        
-        return reviews;
-    }
-
-    @Override
-    public List<ReviewResponseDto> getAllReviewsByUserId(Long userId) {
-        // DAO를 통해 사용자별 리뷰 조회
-        List<ReviewResponseDto> reviews = reviewDao.selectReviewsByUserId(userId);
-        
-        // 각 리뷰에 추가 정보 설정
-        reviews.forEach(this::enrichResponseDto);
-        
-        return reviews;
-    }
-
-    @Override
-    public ReviewResponseDto getReviewById(Long reviewId) {
-        // DAO를 통해 리뷰 조회
+    public ReviewResponseDto getReviewById(int reviewId) {
         ReviewResponseDto review = reviewDao.selectReviewById(reviewId);
         if (review == null) {
-            throw new RuntimeException("해당 리뷰를 찾을 수 없습니다: " + reviewId);
+            throw new NoSuchElementException("존재하지 않는 리뷰입니다.");
         }
-        
-        // 추가 정보 설정
-        enrichResponseDto(review);
-        
         return review;
     }
     
-    // ReviewResponseDto에 추가 정보(사용자 이름, 관광지 이름)를 설정하는 메서드
-    private void enrichResponseDto(ReviewResponseDto responseDto) {
-        // 사용자 이름 설정
-        try {
-            UserDto user = userDao.selectUserById(responseDto.getUserId());
-            if (user != null) {
-                responseDto.setUsername(user.getUsername());
-            }
-        } catch (Exception e) {
-            // 사용자 정보 조회 실패시 무시
+    @Override
+    public List<ReviewResponseDto> getReviewsByUserId(int userId) {
+        // 사용자 존재 확인
+    	UserDto user = userDao.findById(userId);
+        if (user == null) {
+            throw new NoSuchElementException("존재하지 않는 사용자입니다.");
         }
         
-        // 관광지 이름 설정
-        try {
-            SpotDto spot = spotDao.selectSpotById(responseDto.getSpotId());
-            if (spot != null) {
-                responseDto.setSpotName(spot.getName());
-            }
-        } catch (Exception e) {
-            // 관광지 정보 조회 실패시 무시
-        }
+        // 사용자의 리뷰 목록 조회
+        return reviewDao.selectReviewsByUserId(userId);
     }
+    
+    @Override
+    public List<ReviewResponseDto> getReviewsBySpotId(int spotId) {
+        
+        // 관광지 존재 확인
+        SpotDto spot = spotDao.selectSpotByNo(spotId);
+        if (spot == null) {
+            throw new NoSuchElementException("존재하지 않는 관광지입니다.");
+        }
+        
+        // 관광지의 리뷰 목록 조회
+        return reviewDao.selectReviewsBySpotId(spotId);
+    }
+    
 }
