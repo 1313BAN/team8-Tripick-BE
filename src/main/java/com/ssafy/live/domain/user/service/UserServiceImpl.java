@@ -31,6 +31,7 @@ public class UserServiceImpl implements UserService {
         user.setName(request.getName());
         user.setGender(request.getGender());
         user.setRole("USER");
+        user.setAge(request.getAge());
 
         userDao.insertUser(user);
     }

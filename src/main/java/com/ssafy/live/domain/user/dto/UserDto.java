@@ -17,6 +17,7 @@ public class UserDto {
     private String role;
     private String bio;
     private String gender;
+    private int age;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
