@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.live.domain.review.dto.ReviewRequestDto;
 import com.ssafy.live.domain.review.dto.ReviewResponseDto;
 import com.ssafy.live.domain.review.service.ReviewService;
+import com.ssafy.live.security.auth.CustomUserDetails;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,10 +38,9 @@ public class ReviewController {
      */
     @PostMapping
     public ResponseEntity<?> createReview(
-            @AuthenticationPrincipal UserDetails userDetails,
+    		@AuthenticationPrincipal CustomUserDetails user,
             @RequestBody ReviewRequestDto reviewRequestDto) {
-        // 재윤이형한테 id도 넣어달라고 하기
-        int userId = Integer.parseInt(userDetails.);
+        int userId = user.getId();
         ReviewResponseDto responseDto = reviewService.createReview(userId, reviewRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
@@ -55,11 +55,11 @@ public class ReviewController {
      */
     @PutMapping("/{reviewId}")
     public ResponseEntity<?> updateReview(
-            @AuthenticationPrincipal UserDetails userDetails,
+    		@AuthenticationPrincipal CustomUserDetails user,
             @PathVariable int reviewId,
             @RequestBody ReviewRequestDto reviewRequestDto) {
         
-        int userId = Integer.parseInt(userDetails.getUsername());
+    	int userId = user.getId();
         ReviewResponseDto responseDto = reviewService.updateReview(userId, reviewId, reviewRequestDto);
         return ResponseEntity.ok(responseDto);
     }
@@ -73,10 +73,10 @@ public class ReviewController {
      */
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<?> deleteReview(
-            @AuthenticationPrincipal UserDetails userDetails,
+    		@AuthenticationPrincipal CustomUserDetails user,
             @PathVariable int reviewId) {
         
-        int userId = Integer.parseInt(userDetails.getUsername());
+    	int userId = user.getId();
         reviewService.deleteReview(userId, reviewId);
         return ResponseEntity.noContent().build();
     }
