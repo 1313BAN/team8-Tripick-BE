@@ -1,4 +1,4 @@
-package com.ssafy.live.domain.spot.controller;
+package com.ssafy.live.domain.spot.dao;
 
 import com.ssafy.live.domain.spot.dao.SpotDao;
 import com.ssafy.live.domain.spot.dto.SpotDto;
