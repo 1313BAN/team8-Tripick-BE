@@ -1,9 +1,10 @@
 package com.ssafy.live.domain.review.dao;
 
-import java.util.List;
+import java.util.List; 
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.ssafy.live.domain.review.dto.ReviewRequestDto;
 import com.ssafy.live.domain.review.dto.ReviewResponseDto;
 
 @Mapper

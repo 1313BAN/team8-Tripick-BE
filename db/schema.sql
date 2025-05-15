@@ -17,12 +17,11 @@ CREATE TABLE IF NOT EXISTS users (
 
 
 
--- 관광지 좋아요 테이블 (spot_like)
 CREATE TABLE IF NOT EXISTS spot_like (
     spot_id INT,
     user_id INT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (spot_id, user_id),
-    FOREIGN KEY (user_id) REFERENCES user(user_id),
++    FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (spot_id) REFERENCES ssafytrip.attractions(no)
 );

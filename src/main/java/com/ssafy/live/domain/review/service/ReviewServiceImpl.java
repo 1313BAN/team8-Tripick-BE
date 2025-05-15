@@ -42,6 +42,19 @@ public class ReviewServiceImpl implements ReviewService {
             throw new NoSuchElementException("존재하지 않는 관광지입니다.");
         }
 
+       // 사용자가 이미 해당 관광지에 리뷰를 작성했는지 확인
+       List<ReviewResponseDto> userReviews = reviewDao.selectReviewsByUserId(userId);
+       boolean alreadyReviewed = userReviews.stream()
+           .anyMatch(r -> r.getSpotId() == reviewRequestDto.getSpotId());
+       if (alreadyReviewed) {
+           throw new IllegalStateException("이미 해당 관광지에 리뷰를 작성하셨습니다.");
+       }
+    
+       // rating 값 검증 (1-5 범위)
+       if (reviewRequestDto.getRating() < 1 || reviewRequestDto.getRating() > 5) {
+           throw new IllegalArgumentException("평점은 1에서 5 사이의 값이어야 합니다.");
+       }
+        
         // 리뷰 정보 설정
         ReviewResponseDto reviewDto = new ReviewResponseDto();
         reviewDto.setUserId(userId);
@@ -75,6 +88,21 @@ public class ReviewServiceImpl implements ReviewService {
         if (writerId != userId) {
             throw new SecurityException("리뷰 수정 권한이 없습니다.");
         }
+    
+       // 입력 데이터 유효성 검사
+       if (reviewRequestDto.getRating() < 1 || reviewRequestDto.getRating() > 5) {
+           throw new IllegalArgumentException("평점은 1에서 5 사이의 값이어야 합니다.");
+       }
+       
+       if (reviewRequestDto.getTitle() == null || reviewRequestDto.getTitle().trim().isEmpty()) {
+           throw new IllegalArgumentException("리뷰 제목은 필수입니다.");
+       }
+       
+       if (reviewRequestDto.getContent() == null || reviewRequestDto.getContent().trim().isEmpty()) {
+           throw new IllegalArgumentException("리뷰 내용은 필수입니다.");
+    }
+       
+        
         
         // 리뷰 정보 업데이트
         existingReview.setRating(reviewRequestDto.getRating());
