@@ -21,4 +21,6 @@ public interface SpotDao {
     
 	List<SpotDto> selectTopWeeklySpots(Date startDate);
 	
+	List<SpotDto> findInBounds(double swLat, double swLng, double neLat, double neLng, Integer type);
+
 }

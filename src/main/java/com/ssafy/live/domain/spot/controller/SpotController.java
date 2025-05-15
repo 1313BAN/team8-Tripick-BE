@@ -1,6 +1,5 @@
 package com.ssafy.live.domain.spot.controller;
 
-import java.math.BigDecimal; 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.live.domain.spot.dto.SpotDto;
@@ -82,6 +82,18 @@ public class SpotController {
 	        
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
 	    }
+	}
+	
+	@GetMapping("/in-boundary")
+	public ResponseEntity<List<SpotDto>> getSpotsInBoundary(
+	        @RequestParam double swLat,
+	        @RequestParam double swLng,
+	        @RequestParam double neLat,
+	        @RequestParam double neLng,
+	        @RequestParam(required = false) Integer type  // content_type_id
+	) {
+	    List<SpotDto> spots = spotService.getSpotsInBoundary(swLat, swLng, neLat, neLng, type);
+	    return ResponseEntity.ok(spots);
 	}
 	
 }

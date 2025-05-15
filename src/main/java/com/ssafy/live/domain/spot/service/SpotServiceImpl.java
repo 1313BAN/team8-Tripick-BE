@@ -73,6 +73,11 @@ public class SpotServiceImpl implements SpotService {
         return spotDao.selectTopWeeklySpots(startDate);
     }
 
+    @Override
+    public List<SpotDto> getSpotsInBoundary(double swLat, double swLng, double neLat, double neLng, Integer type) {
+        return spotDao.findInBounds(swLat, swLng, neLat, neLng, type);
+    }
+
     
 }
 

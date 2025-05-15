@@ -20,4 +20,7 @@ public interface SpotService {
     
     // 이번주 인기 관광지 조회
     List<SpotDto> getTopWeeklySpots();
+    
+    List<SpotDto> getSpotsInBoundary(double swLat, double swLng, double neLat, double neLng, Integer type);
+
 }

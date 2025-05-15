@@ -153,5 +153,36 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             a.no
         LIMIT 20
     </select>
+    
+    <select id="findInBounds" resultMap="SpotMap" parameterType="map">
+    SELECT
+        no,
+        content_id,
+        title,
+        content_type_id,
+        area_code,
+        si_gun_gu_code,
+        first_image1,
+        first_image2,
+        map_level,
+        latitude,
+        longitude,
+        tel,
+        addr1,
+        addr2,
+        homepage,
+        overview
+    FROM
+        ssafytrip.spots
+    WHERE
+        latitude BETWEEN #{swLat} AND #{neLat}
+        AND longitude BETWEEN #{swLng} AND #{neLng}
+        <if test="type != null">
+            AND content_type_id = #{type}
+        </if>
+    ORDER BY no
+    LIMIT 300
+</select>
+    
 
 </mapper>
