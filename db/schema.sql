@@ -75,7 +75,16 @@ CREATE TABLE `motive` (
 
 
 
-
+INSERT INTO motive (motive_code, motive_name) VALUES (1, '일상적인 환경 및 역할에서의 탈출, 지루함 탈피');
+INSERT INTO motive (motive_code, motive_name) VALUES (2, '쉴 수 있는 기회, 육체 피로 해결 및 정신적인 휴식');
+INSERT INTO motive (motive_code, motive_name) VALUES (3, '여행 동반자와의 친밀감 및 유대감 증진');
+INSERT INTO motive (motive_code, motive_name) VALUES (4, '진정한 자아 찾기 또는 자신을 되돌아볼 기회 찾기');
+INSERT INTO motive (motive_code, motive_name) VALUES (5, 'SNS 사진 등록 등 과시');
+INSERT INTO motive (motive_code, motive_name) VALUES (6, '운동, 건강 증진 및 충전');
+INSERT INTO motive (motive_code, motive_name) VALUES (7, '새로운 경험 추구');
+INSERT INTO motive (motive_code, motive_name) VALUES (8, '역사 탐방, 문화적 경험 등 교육적 동기');
+INSERT INTO motive (motive_code, motive_name) VALUES (9, '특별한 목적(칠순여행, 신혼여행, 수학여행, 인센티브여행)');
+INSERT INTO motive (motive_code, motive_name) VALUES (10, '기타');
 
  
  
