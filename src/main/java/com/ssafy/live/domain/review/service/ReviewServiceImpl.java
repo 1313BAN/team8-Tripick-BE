@@ -66,6 +66,8 @@ public class ReviewServiceImpl implements ReviewService {
         reviewDto.setTitle(reviewRequestDto.getTitle());
         reviewDto.setContent(reviewRequestDto.getContent());
         reviewDto.setReviewLike(0); // 초기 좋아요 수는 0
+        reviewDto.setMotiveCode(reviewRequestDto.getMotiveCode());
+        reviewDto.setComNum(reviewRequestDto.getComNum());
 
         // 리뷰 저장
         reviewDao.insertReview(reviewDto);
@@ -108,6 +110,8 @@ public class ReviewServiceImpl implements ReviewService {
         existingReview.setRating(reviewRequestDto.getRating());
         existingReview.setTitle(reviewRequestDto.getTitle());
         existingReview.setContent(reviewRequestDto.getContent());
+        existingReview.setMotiveCode(reviewRequestDto.getMotiveCode());
+        existingReview.setComNum(reviewRequestDto.getComNum());
         
         // 리뷰 수정
         reviewDao.updateReview(existingReview);

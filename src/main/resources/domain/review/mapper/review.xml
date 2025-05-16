@@ -18,7 +18,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createdAt" column="created_at"/>
         <result property="modifiedAt" column="modified_at"/>
         <result property="username" column="name"/>
-        
+        <!-- 새로 추가된 필드 매핑 -->
+        <result property="motiveCode" column="motive_code"/>
+        <result property="comNum" column="com_num"/>
         
         
 		<!-- 사용자 정보 매핑 -->
@@ -47,7 +49,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             rating, 
             title, 
             content, 
-            review_like, 
+            review_like,
+            motive_code, 
+            com_num,  
             created_at, 
             modified_at
         ) VALUES (
@@ -57,30 +61,33 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{title}, 
             #{content}, 
             #{reviewLike}, 
+            #{motiveCode}, 
+            #{comNum}, 
             NOW(), 
             NOW()
         )
     </insert>
     
-        <!-- 리뷰 수정 -->
+    <!-- 리뷰 수정 -->
     <update id="updateReview" parameterType="com.ssafy.live.domain.review.dto.ReviewResponseDto">
         UPDATE ssafytrip.reviews 
         SET 
             rating = #{rating}, 
             title = #{title}, 
             content = #{content},
+            motive_code = #{motiveCode},
+            com_num = #{comNum},
             modified_at = NOW()
         WHERE review_id = #{reviewId}
     </update>
     
-        <!-- 리뷰 삭제 -->
+    <!-- 리뷰 삭제 -->
     <delete id="deleteReview" parameterType="int">
         DELETE FROM ssafytrip.reviews
         WHERE review_id = #{reviewId}
     </delete>
     
-    
-    <!-- 리뷰 ID로 조회 (age 포함) -->
+    <!-- 리뷰 ID로 조회 (새 필드 포함) -->
     <select id="selectReviewById" parameterType="int" resultMap="ReviewMap">
         SELECT 
             r.review_id, 
@@ -90,6 +97,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             r.review_like,
             r.title,
             r.content,
+            r.motive_code,
+            r.com_num,
             r.created_at,
             r.modified_at,
             u.id as user_id,
@@ -108,8 +117,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         JOIN ssafytrip.spots s ON r.no = s.no
         WHERE r.review_id = #{reviewId}
     </select>
-	
-	   <!-- 사용자 ID로 리뷰 목록 조회 (age 포함) -->
+    
+    <!-- 사용자 ID로 리뷰 목록 조회 (새 필드 포함) -->
     <select id="selectReviewsByUserId" parameterType="int" resultMap="ReviewMap">
         SELECT 
             r.review_id, 
@@ -119,6 +128,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             r.review_like,
             r.title,
             r.content,
+            r.motive_code,
+            r.com_num,
             r.created_at,
             r.modified_at,
             u.id as user_id,
@@ -139,7 +150,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         ORDER BY r.created_at DESC
     </select>
     
-    <!-- 관광지 ID로 리뷰 목록 조회 (age 포함) -->
+    <!-- 관광지 ID로 리뷰 목록 조회 (새 필드 포함) -->
     <select id="selectReviewsBySpotId" parameterType="int" resultMap="ReviewMap">
         SELECT 
             r.review_id, 
@@ -149,6 +160,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             r.review_like,
             r.title,
             r.content,
+            r.motive_code,
+            r.com_num,
             r.created_at,
             r.modified_at,
             u.id as user_id,

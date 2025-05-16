@@ -36,6 +36,9 @@ public class ReviewDaoTest {
         assertThat(insertedReview.getContent()).isEqualTo("테스트 리뷰 내용");
         assertThat(insertedReview.getUserId()).isEqualTo(1);
         assertThat(insertedReview.getSpotId()).isEqualTo(56644);
+        // 새 필드 검증
+        assertThat(insertedReview.getMotiveCode()).isEqualTo(2);
+        assertThat(insertedReview.getComNum()).isEqualTo(3);
     }
 
     @Test
@@ -49,6 +52,9 @@ public class ReviewDaoTest {
         newReview.setTitle("수정된 리뷰 제목");
         newReview.setContent("수정된 리뷰 내용");
         newReview.setRating(5.0f);
+        // 새 필드 수정
+        newReview.setMotiveCode(4);
+        newReview.setComNum(5);
         newReview.setModifiedAt(LocalDateTime.now());
         reviewDao.updateReview(newReview);
 
@@ -58,6 +64,9 @@ public class ReviewDaoTest {
         assertThat(updatedReview.getTitle()).isEqualTo("수정된 리뷰 제목");
         assertThat(updatedReview.getContent()).isEqualTo("수정된 리뷰 내용");
         assertThat(updatedReview.getRating()).isEqualTo(5.0f);
+        // 새 필드 검증
+        assertThat(updatedReview.getMotiveCode()).isEqualTo(4);
+        assertThat(updatedReview.getComNum()).isEqualTo(5);
     }
 
     @Test
@@ -92,6 +101,9 @@ public class ReviewDaoTest {
         assertThat(foundReview.getReviewId()).isEqualTo(reviewId);
         assertThat(foundReview.getTitle()).isEqualTo("테스트 리뷰 제목");
         assertThat(foundReview.getContent()).isEqualTo("테스트 리뷰 내용");
+        // 새 필드 검증
+        assertThat(foundReview.getMotiveCode()).isEqualTo(2);
+        assertThat(foundReview.getComNum()).isEqualTo(3);
     }
 
     @Test
@@ -122,6 +134,17 @@ public class ReviewDaoTest {
         assertThat(userReviews).isNotNull();
         assertThat(userReviews).isNotEmpty();
         assertThat(userReviews.stream().anyMatch(r -> r.getReviewId() == newReview.getReviewId())).isTrue();
+        // 새 필드 검증 (최소 하나의 리뷰에서)
+        assertThat(userReviews.stream()
+            .filter(r -> r.getReviewId() == newReview.getReviewId())
+            .findFirst()
+            .map(ReviewResponseDto::getMotiveCode)
+            .orElse(null)).isEqualTo(2);
+        assertThat(userReviews.stream()
+            .filter(r -> r.getReviewId() == newReview.getReviewId())
+            .findFirst()
+            .map(ReviewResponseDto::getComNum)
+            .orElse(null)).isEqualTo(3);
     }
 
     @Test
@@ -139,6 +162,17 @@ public class ReviewDaoTest {
         assertThat(spotReviews).isNotNull();
         assertThat(spotReviews).isNotEmpty();
         assertThat(spotReviews.stream().anyMatch(r -> r.getReviewId() == newReview.getReviewId())).isTrue();
+        // 새 필드 검증 (최소 하나의 리뷰에서)
+        assertThat(spotReviews.stream()
+            .filter(r -> r.getReviewId() == newReview.getReviewId())
+            .findFirst()
+            .map(ReviewResponseDto::getMotiveCode)
+            .orElse(null)).isEqualTo(2);
+        assertThat(spotReviews.stream()
+            .filter(r -> r.getReviewId() == newReview.getReviewId())
+            .findFirst()
+            .map(ReviewResponseDto::getComNum)
+            .orElse(null)).isEqualTo(3);
     }
 
     @Test
@@ -170,6 +204,10 @@ public class ReviewDaoTest {
         review.setRating(4.5f);
         review.setReviewLike(0);
         review.setCreatedAt(LocalDateTime.now());
+        
+        // 새 필드 설정
+        review.setMotiveCode(2); // 동기 코드 (예: 2 = 휴양)
+        review.setComNum(3);     // 동반자 수 (예: 3명)
         
         // UserDto 설정 (필요한 경우)
         // UserDto userDto = new UserDto();

@@ -28,6 +28,10 @@ public class ReviewResponseDto {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime modifiedAt;
     
+    // 새로 추가된 필드
+    private Integer motiveCode; // 동기 코드
+    private Integer comNum; // 여행 동반자 수
+    
     // 사용자 정보 (기존 필드는 남겨두고 중복 객체도 추가)
     private int userId;
     private String username; // 호환성을 위해 유지

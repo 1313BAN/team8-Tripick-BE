@@ -29,4 +29,10 @@ public class ReviewRequestDto {
 	@NotBlank(message = "리뷰 제목은 필수 항목입니다")
 	@Size(min = 5, max = 100, message = "리뷰 제목은 5자 이상 100자 이하여야 합니다")
     private String title; // 제목
+	
+    // 새로 추가된 필드
+    private Integer motiveCode; // 동기 코드
+    
+    @Min(value = 1, message = "동반자 수는 1명 이상이어야 합니다")
+    private Integer comNum; // 여행 동반자 수
 }
