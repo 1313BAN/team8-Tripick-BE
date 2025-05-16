@@ -108,6 +108,8 @@ public class ReviewServiceImpl implements ReviewService {
         existingReview.setRating(reviewRequestDto.getRating());
         existingReview.setTitle(reviewRequestDto.getTitle());
         existingReview.setContent(reviewRequestDto.getContent());
+        existingReview.setMotiveCode(reviewRequestDto.getMotiveCode());
+        existingReview.setComNum(reviewRequestDto.getComNum());
         
         // 리뷰 수정
         reviewDao.updateReview(existingReview);
