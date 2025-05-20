@@ -10,26 +10,19 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import com.ssafy.live.domain.user.dao.UserDao;
 import com.ssafy.live.domain.user.dto.AuthResponseDto;
 import com.ssafy.live.domain.user.dto.LoginRequestDto;
-import com.ssafy.live.domain.user.dto.UserDto;
 import com.ssafy.live.domain.user.service.UserService;
 import com.ssafy.live.security.auth.CustomUserDetails;
-import com.ssafy.live.security.jwt.JwtTokenProvider;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.StringRedisTemplate;
 
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final JwtTokenProvider jwtTokenProvider;
-    private final UserDao userDao;
     private final UserService userService;
-    private final StringRedisTemplate redisTemplate;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDto request) {
@@ -41,7 +34,7 @@ public class AuthController {
                 .path("/")
                 .maxAge(Duration.ofDays(14))
                 .sameSite(
-                        "None")
+                        "Lax")
                 .build();
 
         return ResponseEntity.ok()
