@@ -129,7 +129,7 @@ public class ReviewDaoTest {
     }
 
     @Test
-    @DisplayName("관광지 ID로 리뷰 목록 조회 테스트")
+    @DisplayName("관광지 ID로 리뷰 목록 조회 테스트")  
     void selectReviewsBySpotNo() {
         // given
         ReviewResponseDto newReview = createSampleReview();
@@ -173,7 +173,7 @@ public class ReviewDaoTest {
         review.setSpotName("테스트 관광지");
         review.setTitle("테스트 리뷰 제목");
         review.setContent("테스트 리뷰 내용");
-        review.setRating(4.5); // Double 타입
+        review.setRating(4.0); // Double 타입
         review.setReviewLike(0);
         review.setCreatedAt(LocalDateTime.now());
         
