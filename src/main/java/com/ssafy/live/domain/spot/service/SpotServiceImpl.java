@@ -65,13 +65,6 @@ public class SpotServiceImpl implements SpotService {
         return spotDao.selectSpotByNo(spotDto.getNo());
     }
     
-	
-    public List<SpotDto> getTopWeeklySpots() {
-        LocalDateTime startOfWeek = LocalDateTime.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-        Date startDate = Date.from(startOfWeek.atZone(ZoneId.systemDefault()).toInstant());
-        
-        return spotDao.selectTopWeeklySpots(startDate);
-    }
 
     @Override
     public List<SpotDto> getSpotsInBoundary(double swLat, double swLng, double neLat, double neLng, Integer type) {

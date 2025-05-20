@@ -58,32 +58,7 @@ public class SpotController {
         return new ResponseEntity<>(createdSpot, HttpStatus.CREATED);
     }
     
-    
-	@GetMapping("/top-weekly")
-	public ResponseEntity<?> receiveSpot() {
-		
-	     try {
-		 List<SpotDto> topSpots = spotService.getTopWeeklySpots();
-		
-		 System.out.println(topSpots);
-		 
-		 
-		 Map<String, Object> response = new HashMap<>();
-         response.put("success", true);
-         response.put("message", "이번주 인기 관광지 조회 성공");
-         response.put("data", topSpots);
-		
-         return ResponseEntity.ok(response);
-         
-	    } catch (Exception e) {
-	        Map<String, Object> errorResponse = new HashMap<>();
-	        errorResponse.put("success", false);
-	        errorResponse.put("message", "이번주 인기 관광지 조회 실패: " + e.getMessage());
-	        
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-	    }
-	}
-	
+    // 좌표 주변의 관광지 가져오기
 	@GetMapping("/in-boundary")
 	public ResponseEntity<List<SpotDto>> getSpotsInBoundary(
 	        @RequestParam double swLat,
@@ -95,5 +70,6 @@ public class SpotController {
 	    List<SpotDto> spots = spotService.getSpotsInBoundary(swLat, swLng, neLat, neLng, type);
 	    return ResponseEntity.ok(spots);
 	}
+	
 	
 }

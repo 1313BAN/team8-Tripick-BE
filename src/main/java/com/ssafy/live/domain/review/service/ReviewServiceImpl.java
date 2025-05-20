@@ -37,7 +37,7 @@ public class ReviewServiceImpl implements ReviewService {
         }
 
         // 관광지 존재 확인
-        SpotDto spot = spotDao.selectSpotByNo(reviewRequestDto.getSpotId());
+        SpotDto spot = spotDao.selectSpotByNo(reviewRequestDto.getNo());
         if (spot == null) {
             throw new NoSuchElementException("존재하지 않는 관광지입니다.");
         }
@@ -45,7 +45,7 @@ public class ReviewServiceImpl implements ReviewService {
        // 사용자가 이미 해당 관광지에 리뷰를 작성했는지 확인
        List<ReviewResponseDto> userReviews = reviewDao.selectReviewsByUserId(userId);
        boolean alreadyReviewed = userReviews.stream()
-           .anyMatch(r -> r.getSpotId() == reviewRequestDto.getSpotId());
+           .anyMatch(r -> r.getNo() == reviewRequestDto.getNo());
        if (alreadyReviewed) {
            throw new IllegalStateException("이미 해당 관광지에 리뷰를 작성하셨습니다.");
        }
@@ -60,14 +60,12 @@ public class ReviewServiceImpl implements ReviewService {
         reviewDto.setUserId(userId);
         reviewDto.setUsername(user.getName()); // 사용자 이름 설정
         reviewDto.setUser(user); // 사용자 전체 정보 설정
-        reviewDto.setSpotId(reviewRequestDto.getSpotId());
+        reviewDto.setNo(reviewRequestDto.getNo());
         reviewDto.setSpotName(spot.getTitle()); // 관광지 이름 설정
         reviewDto.setRating(reviewRequestDto.getRating());
         reviewDto.setTitle(reviewRequestDto.getTitle());
         reviewDto.setContent(reviewRequestDto.getContent());
         reviewDto.setReviewLike(0); // 초기 좋아요 수는 0
-        reviewDto.setMotiveCode(reviewRequestDto.getMotiveCode());
-        reviewDto.setComNum(reviewRequestDto.getComNum());
 
         // 리뷰 저장
         reviewDao.insertReview(reviewDto);
@@ -102,16 +100,12 @@ public class ReviewServiceImpl implements ReviewService {
        
        if (reviewRequestDto.getContent() == null || reviewRequestDto.getContent().trim().isEmpty()) {
            throw new IllegalArgumentException("리뷰 내용은 필수입니다.");
-    }
-       
-        
+       }
         
         // 리뷰 정보 업데이트
         existingReview.setRating(reviewRequestDto.getRating());
         existingReview.setTitle(reviewRequestDto.getTitle());
         existingReview.setContent(reviewRequestDto.getContent());
-        existingReview.setMotiveCode(reviewRequestDto.getMotiveCode());
-        existingReview.setComNum(reviewRequestDto.getComNum());
         
         // 리뷰 수정
         reviewDao.updateReview(existingReview);
@@ -134,7 +128,6 @@ public class ReviewServiceImpl implements ReviewService {
             throw new SecurityException("리뷰 삭제 권한이 없습니다.");
         }
         
-        
         // 리뷰 삭제
         reviewDao.deleteReview(reviewId);
     }
@@ -151,7 +144,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public List<ReviewResponseDto> getReviewsByUserId(int userId) {
         // 사용자 존재 확인
-    	UserDto user = userDao.findById(userId);
+        UserDto user = userDao.findById(userId);
         if (user == null) {
             throw new NoSuchElementException("존재하지 않는 사용자입니다.");
         }
@@ -161,16 +154,14 @@ public class ReviewServiceImpl implements ReviewService {
     }
     
     @Override
-    public List<ReviewResponseDto> getReviewsBySpotId(int spotId) {
-        
+    public List<ReviewResponseDto> getReviewsBySpotNo(int spotNo) {
         // 관광지 존재 확인
-        SpotDto spot = spotDao.selectSpotByNo(spotId);
+        SpotDto spot = spotDao.selectSpotByNo(spotNo);
         if (spot == null) {
             throw new NoSuchElementException("존재하지 않는 관광지입니다.");
         }
         
         // 관광지의 리뷰 목록 조회
-        return reviewDao.selectReviewsBySpotId(spotId);
+        return reviewDao.selectReviewsBySpotNo(spotNo);
     }
-    
 }

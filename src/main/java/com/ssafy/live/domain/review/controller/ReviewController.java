@@ -32,13 +32,13 @@ public class ReviewController {
     /**
      * 리뷰 작성 API
      * 
-     * @param userDetails 인증된 사용자 정보
+     * @param user 인증된 사용자 정보
      * @param reviewRequestDto 리뷰 작성 정보
      * @return 생성된 리뷰 정보
      */
     @PostMapping
     public ResponseEntity<?> createReview(
-    		@AuthenticationPrincipal CustomUserDetails user,
+            @AuthenticationPrincipal CustomUserDetails user,
             @RequestBody ReviewRequestDto reviewRequestDto) {
         int userId = user.getId();
         ReviewResponseDto responseDto = reviewService.createReview(userId, reviewRequestDto);
@@ -48,18 +48,18 @@ public class ReviewController {
     /**
      * 리뷰 수정 API
      * 
-     * @param userDetails 인증된 사용자 정보
+     * @param user 인증된 사용자 정보
      * @param reviewId 수정할 리뷰 ID
      * @param reviewRequestDto 수정할 리뷰 정보
      * @return 수정된 리뷰 정보
      */
     @PutMapping("/{reviewId}")
     public ResponseEntity<?> updateReview(
-    		@AuthenticationPrincipal CustomUserDetails user,
+            @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable int reviewId,
             @RequestBody ReviewRequestDto reviewRequestDto) {
         
-    	int userId = user.getId();
+        int userId = user.getId();
         ReviewResponseDto responseDto = reviewService.updateReview(userId, reviewId, reviewRequestDto);
         return ResponseEntity.ok(responseDto);
     }
@@ -67,16 +67,16 @@ public class ReviewController {
     /**
      * 리뷰 삭제 API
      * 
-     * @param userDetails 인증된 사용자 정보
+     * @param user 인증된 사용자 정보
      * @param reviewId 삭제할 리뷰 ID
      * @return 상태 코드
      */
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<?> deleteReview(
-    		@AuthenticationPrincipal CustomUserDetails user,
+            @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable int reviewId) {
         
-    	int userId = user.getId();
+        int userId = user.getId();
         reviewService.deleteReview(userId, reviewId);
         return ResponseEntity.noContent().build();
     }
@@ -108,13 +108,12 @@ public class ReviewController {
     /**
      * 관광지별 리뷰 목록 조회 API
      * 
-     * @param spotId 조회할 관광지 ID
+     * @param spotNo 조회할 관광지 ID (no)
      * @return 관광지의 리뷰 목록
      */
-    @GetMapping("/spots/{spotId}")
-    public ResponseEntity<List<?>> getReviewsBySpot(@PathVariable int spotId) {
-        List<ReviewResponseDto> reviewList = reviewService.getReviewsBySpotId(spotId);
+    @GetMapping("/spots/{spotNo}")
+    public ResponseEntity<List<?>> getReviewsBySpot(@PathVariable int spotNo) {
+        List<ReviewResponseDto> reviewList = reviewService.getReviewsBySpotNo(spotNo);
         return ResponseEntity.ok(reviewList);
     }
-    
 }

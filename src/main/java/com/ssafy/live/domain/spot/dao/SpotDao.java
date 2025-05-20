@@ -19,8 +19,6 @@ public interface SpotDao {
 
     int deleteSpot(int no);
     
-	List<SpotDto> selectTopWeeklySpots(Date startDate);
-	
 	List<SpotDto> findInBounds(double swLat, double swLng, double neLat, double neLng, Integer type);
 
 }
