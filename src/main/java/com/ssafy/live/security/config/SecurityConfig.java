@@ -32,31 +32,35 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    	return http
-    		    .httpBasic(httpBasic -> httpBasic.disable())
-    		    .csrf(csrf -> csrf.disable())
-    		    .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-    		    .authorizeHttpRequests(auth -> auth
-    		        //.requestMatchers("/api/users/login", "/api/users/signup").permitAll()
-    		        .anyRequest().permitAll()
-    		    )
-    		    .exceptionHandling(ex -> ex
-    		        .authenticationEntryPoint(entryPoint)
-    		        .accessDeniedHandler(accessDeniedHandler)
-    		    )
-    		    .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
-    		    .build();
-
+        return http
+                .httpBasic(h -> h.disable())
+                .csrf(c -> c.disable())
+                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/api/auth/login",
+                                "/api/auth/reissue",
+                                "/api/users/signup",
+                                "/api/reviews/**",
+                                "/api/spots/**",
+                                "/api/public/**")
+                        .permitAll()
+                        .anyRequest().authenticated())
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(entryPoint)
+                        .accessDeniedHandler(accessDeniedHandler))
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
+                        UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
 
     @Bean
     AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
         builder.userDetailsService(userDetailsService)
-               .passwordEncoder(passwordEncoder());
+                .passwordEncoder(passwordEncoder());
         return builder.build();
     }
-
 
     @Bean
     PasswordEncoder passwordEncoder() {

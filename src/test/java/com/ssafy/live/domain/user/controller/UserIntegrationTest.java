@@ -20,13 +20,21 @@ public class UserIntegrationTest {
     @LocalServerPort
     int port;
 
-    String baseUrl;
     RestTemplate rest = new RestTemplate();
     static String jwtToken;
 
-    @BeforeEach
-    void setUp() {
-        baseUrl = "http://localhost:" + port + "/api/users";
+    String getUserUrl(String path) {
+        return "http://localhost:" + port + "/api/users" + path;
+    }
+
+    String getAuthUrl(String path) {
+        return "http://localhost:" + port + "/api/auth" + path;
+    }
+
+    HttpHeaders authHeader() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(jwtToken);
+        return headers;
     }
 
     @Test
@@ -40,7 +48,7 @@ public class UserIntegrationTest {
         req.setGender("MALE");
         req.setAge(30);
 
-        ResponseEntity<Void> res = rest.postForEntity(baseUrl + "/signup", req, Void.class);
+        ResponseEntity<Void> res = rest.postForEntity(getUserUrl("/signup"), req, Void.class);
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
 
@@ -51,20 +59,28 @@ public class UserIntegrationTest {
         login.setEmail("jwtuser@example.com");
         login.setPassword("test1234!");
 
-        ResponseEntity<String> res = rest.postForEntity(baseUrl + "/login", login, String.class);
-        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
-        jwtToken = res.getBody();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<LoginRequestDto> entity = new HttpEntity<>(login, headers);
+
+        ResponseEntity<Map> response = rest.exchange(
+                getAuthUrl("/login"),
+                HttpMethod.POST,
+                entity,
+                Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        jwtToken = (String) response.getBody().get("accessToken");
         assertThat(jwtToken).isNotNull();
     }
 
     @Test
     @Order(3)
     void getMyInfoTest() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(jwtToken);
-        HttpEntity<?> entity = new HttpEntity<>(headers);
+        HttpEntity<?> entity = new HttpEntity<>(authHeader());
 
-        ResponseEntity<UserDto> res = rest.exchange(baseUrl + "/me", HttpMethod.GET, entity, UserDto.class);
+        ResponseEntity<UserDto> res = rest.exchange(getUserUrl("/me"), HttpMethod.GET, entity, UserDto.class);
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(res.getBody().getEmail()).isEqualTo("jwtuser@example.com");
     }
@@ -72,44 +88,47 @@ public class UserIntegrationTest {
     @Test
     @Order(4)
     void updateMyInfoTest() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(jwtToken);
-
         UserDto update = new UserDto();
         update.setNickname("변경된닉");
         update.setName("변경된이름");
         update.setAge(31);
         update.setGender("FEMALE");
 
-        HttpEntity<UserDto> entity = new HttpEntity<>(update, headers);
-        ResponseEntity<Void> res = rest.exchange(baseUrl + "/me", HttpMethod.PUT, entity, Void.class);
+        HttpEntity<UserDto> entity = new HttpEntity<>(update, authHeader());
+
+        ResponseEntity<Void> res = rest.exchange(getUserUrl("/me"), HttpMethod.PUT, entity, Void.class);
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
     @Order(5)
     void changePasswordTest() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(jwtToken);
-
         Map<String, String> body = Map.of(
                 "currentPassword", "test1234!",
-                "newPassword", "newpass123!"
-        );
+                "newPassword", "newpass123!");
 
-        HttpEntity<?> entity = new HttpEntity<>(body, headers);
-        ResponseEntity<Void> res = rest.exchange(baseUrl + "/me/password", HttpMethod.PUT, entity, Void.class);
+        HttpEntity<?> entity = new HttpEntity<>(body, authHeader());
+
+        ResponseEntity<Void> res = rest.exchange(getUserUrl("/me/password"), HttpMethod.PUT, entity, Void.class);
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
     @Order(6)
     void deleteUserTest() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(jwtToken);
-        HttpEntity<?> entity = new HttpEntity<>(headers);
+        HttpEntity<?> entity = new HttpEntity<>(authHeader());
 
-        ResponseEntity<Void> res = rest.exchange(baseUrl + "/me", HttpMethod.DELETE, entity, Void.class);
+        ResponseEntity<Void> res = rest.exchange(getUserUrl("/me"), HttpMethod.DELETE, entity, Void.class);
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    @Order(7)
+    void logoutTest() {
+        HttpEntity<?> entity = new HttpEntity<>(authHeader());
+
+        ResponseEntity<Map> res = rest.exchange(getAuthUrl("/logout"), HttpMethod.POST, entity, Map.class);
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(res.getBody().get("message")).isEqualTo("로그아웃 완료");
     }
 }

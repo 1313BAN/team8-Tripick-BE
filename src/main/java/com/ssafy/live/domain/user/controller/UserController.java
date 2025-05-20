@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.live.domain.user.dto.LoginRequestDto;
 import com.ssafy.live.domain.user.dto.SignupRequestDto;
 import com.ssafy.live.domain.user.dto.UserDto;
 import com.ssafy.live.domain.user.service.UserService;
@@ -34,12 +33,6 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequestDto request) {
-        String token = userService.login(request);
-        return ResponseEntity.ok(token);
-    }
-
     @GetMapping("/me")
     public ResponseEntity<UserDto> getMyInfo(@AuthenticationPrincipal CustomUserDetails user) {
         return ResponseEntity.ok(userService.getMyUserInfo(user));
@@ -47,7 +40,7 @@ public class UserController {
 
     @PutMapping("/me")
     public ResponseEntity<?> updateMyInfo(@RequestBody UserDto userDto,
-                                          @AuthenticationPrincipal CustomUserDetails user) {
+            @AuthenticationPrincipal CustomUserDetails user) {
         userService.updateMyUser(userDto, user);
         return ResponseEntity.ok().build();
     }
@@ -60,7 +53,7 @@ public class UserController {
 
     @PutMapping("/me/password")
     public ResponseEntity<?> changePassword(@RequestBody Map<String, String> body,
-                                            @AuthenticationPrincipal CustomUserDetails user) {
+            @AuthenticationPrincipal CustomUserDetails user) {
         String current = body.get("currentPassword");
         String next = body.get("newPassword");
         userService.changePassword(current, next, user);
