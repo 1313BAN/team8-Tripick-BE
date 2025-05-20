@@ -29,10 +29,6 @@ public class ReviewResponseDto {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime modifiedAt;
 
-    // 새로 추가된 필드
-    private Integer motiveCode;
-    private Integer comNum;
-
     // 사용자 정보 
     private int userId;
     private String username; // 호환성을 위해 유지
