@@ -10,179 +10,120 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <id property="no" column="no" />
         
         <!-- 일반 필드 매핑 (property: 자바 객체 필드명, column: DB 컬럼명) -->
-        <result property="contentId" column="content_id" />
         <result property="title" column="title" />
         <result property="contentTypeId" column="content_type_id" />
         <result property="areaCode" column="area_code" />
         <result property="siGunGuCode" column="si_gun_gu_code" />
         <result property="firstImage1" column="first_image1" />
         <result property="firstImage2" column="first_image2" />
-        <result property="mapLevel" column="map_level" />
         <result property="latitude" column="latitude" />
         <result property="longitude" column="longitude" />
-        <result property="tel" column="tel" />
-        <result property="addr1" column="addr1" />
-        <result property="addr2" column="addr2" />
+        <result property="addr" column="addr" />
         <result property="homepage" column="homepage" />
         <result property="overview" column="overview" />
     </resultMap>
 
-
-	<!-- 모든 관광지 조회 -->
-	<select id="selectAllSpots" resultMap="SpotMap">
-	    SELECT
-	        no,
-	        content_id,
-	        title,
-	        content_type_id,
-	        area_code,
-	        si_gun_gu_code,
-	        first_image1,
-	        first_image2,
-	        map_level,
-	        latitude,
-	        longitude,
-	        tel,
-	        addr1,
-	        addr2,
-	        homepage,
-	        overview
-	    FROM
-	        ssafytrip.spots
-	    ORDER BY
-	        no
-	</select>
-	
-	<!-- 특정 관광지 조회 (no 기준) -->
-	<select id="selectSpotByNo" parameterType="int" resultMap="SpotMap">
-	    SELECT
-	        no,
-	        content_id,
-	        title,
-	        content_type_id,
-	        area_code,
-	        si_gun_gu_code,
-	        first_image1,
-	        first_image2,
-	        map_level,
-	        latitude,
-	        longitude,
-	        tel,
-	        addr1,
-	        addr2,
-	        homepage,
-	        overview
-	    FROM
-	        ssafytrip.spots
-	    WHERE
-	        no = #{no}
-	</select>
-
-	<!-- 관광지 등록 -->
-	<insert id="insertSpot" parameterType="com.ssafy.live.domain.spot.dto.SpotDto" useGeneratedKeys="true" keyProperty="no">
-	    INSERT INTO ssafytrip.spots (
-	        content_id,
-	        title,
-	        content_type_id,
-	        area_code,
-	        si_gun_gu_code,
-	        first_image1,
-	        first_image2,
-	        map_level,
-	        latitude,
-	        longitude,
-	        tel,
-	        addr1,
-	        addr2,
-	        homepage,
-	        overview
-	    ) VALUES (
-	        #{contentId},
-	        #{title},
-	        #{contentTypeId},
-	        #{areaCode},
-	        #{siGunGuCode},
-	        #{firstImage1},
-	        #{firstImage2},
-	        #{mapLevel},
-	        #{latitude},
-	        #{longitude},
-	        #{tel},
-	        #{addr1},
-	        #{addr2},
-	        #{homepage},
-	        #{overview}
-	    )
-	</insert>
-	
-		<!-- 관광지 삭제 -->
-	<delete id="deleteSpot" parameterType="int">
-	    DELETE FROM ssafytrip.spots
-	    WHERE no = #{no}
-	</delete>
-
-    <!-- 이번주 인기 관광지 20개 조회 -->
-    <select id="selectTopWeeklySpots" parameterType="java.util.Date" resultMap="SpotMap">
+    <!-- 모든 관광지 조회 -->
+    <select id="selectAllSpots" resultMap="SpotMap">
         SELECT
-            a.no,              /* 관광지 ID */
-            a.content_id,      /* 콘텐츠 ID */
-            a.title,           /* 관광지 제목 */
-            a.content_type_id, /* 콘텐츠 타입 ID */
-            a.area_code,       /* 지역 코드 */
-            a.si_gun_gu_code,  /* 시군구 코드 */
-            a.first_image1,    /* 대표 이미지 1 */
-            a.first_image2,    /* 대표 이미지 2 */
-            a.map_level,       /* 지도 레벨 */
-            a.latitude,        /* 위도 */
-            a.longitude,       /* 경도 */
-            a.tel,             /* 전화번호 */
-            a.addr1,           /* 주소 1 */
-            a.addr2,           /* 주소 2 */
-            a.homepage,        /* 홈페이지 URL */
-            a.overview         /* 개요 */
+            no,
+            title,
+            content_type_id,
+            area_code,
+            si_gun_gu_code,
+            first_image1,
+            first_image2,
+            latitude,
+            longitude,
+            addr,
+            homepage,
+            overview
         FROM
-            ssafytrip.spots a
-        JOIN
-            spot_like sl ON a.no = sl.spot_id
-        WHERE
-            sl.created_at >= #{startDate}
-        GROUP BY
-            a.no
+            trippick.spots
         ORDER BY
-            COUNT(sl.user_id) DESC,
-            a.no
-        LIMIT 20
+            no
     </select>
     
-    <select id="findInBounds" resultMap="SpotMap" parameterType="map">
-    SELECT
-        no,
-        content_id,
-        title,
-        content_type_id,
-        area_code,
-        si_gun_gu_code,
-        first_image1,
-        first_image2,
-        map_level,
-        latitude,
-        longitude,
-        tel,
-        addr1,
-        addr2,
-        homepage,
-        overview
-    FROM
-        ssafytrip.spots
-    WHERE
-        latitude BETWEEN #{swLat} AND #{neLat}
-        AND longitude BETWEEN #{swLng} AND #{neLng}
-        <if test="type != null">
-            AND content_type_id = #{type}
-        </if>
-    ORDER BY no
-    LIMIT 300
-</select>
-    
+    <!-- 특정 관광지 조회 (no 기준) -->
+    <select id="selectSpotByNo" parameterType="int" resultMap="SpotMap">
+        SELECT
+            no,
+            title,
+            content_type_id,
+            area_code,
+            si_gun_gu_code,
+            first_image1,
+            first_image2,
+            latitude,
+            longitude,
+            addr,
+            homepage,
+            overview
+        FROM
+            trippick.spots
+        WHERE
+            no = #{no}
+    </select>
 
+    <!-- 관광지 등록 -->
+    <insert id="insertSpot" parameterType="com.ssafy.live.domain.spot.dto.SpotDto" useGeneratedKeys="true" keyProperty="no">
+        INSERT INTO trippick.spots (
+            title,
+            content_type_id,
+            area_code,
+            si_gun_gu_code,
+            first_image1,
+            first_image2,
+            latitude,
+            longitude,
+            addr,
+            homepage,
+            overview
+        ) VALUES (
+            #{title},
+            #{contentTypeId},
+            #{areaCode},
+            #{siGunGuCode},
+            #{firstImage1},
+            #{firstImage2},
+            #{latitude},
+            #{longitude},
+            #{addr},
+            #{homepage},
+            #{overview}
+        )
+    </insert>
+    
+    <!-- 관광지 삭제 -->
+    <delete id="deleteSpot" parameterType="int">
+        DELETE FROM trippick.spots
+        WHERE no = #{no}
+    </delete>
+    
+    <!-- 경계 내 관광지 검색 -->
+    <select id="findInBounds" resultMap="SpotMap" parameterType="map">
+        SELECT
+            no,
+            title,
+            content_type_id,
+            area_code,
+            si_gun_gu_code,
+            first_image1,
+            first_image2,
+            latitude,
+            longitude,
+            addr,
+            homepage,
+            overview
+        FROM
+            trippick.spots
+        WHERE
+            latitude BETWEEN #{swLat} AND #{neLat}
+            AND longitude BETWEEN #{swLng} AND #{neLng}
+            <if test="type != null">
+                AND content_type_id = #{type}
+            </if>
+        ORDER BY no
+        LIMIT 300
+    </select>
 </mapper>
