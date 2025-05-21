@@ -15,7 +15,7 @@ public class SignupRequestDto {
     private String name;
     private String gender;
     private int age;
-
+    private String bio;
     private Integer accompanyCode;
     private Integer residenceSidoCode;
     private List<Integer> motiveCodes;
@@ -28,6 +28,7 @@ public class SignupRequestDto {
         user.setName(this.name);
         user.setGender(this.gender);
         user.setAge(this.age);
+        user.setBio(this.bio);
         user.setAccompanyCode(this.accompanyCode);
         user.setResidenceSidoCode(this.residenceSidoCode);
         user.setMotiveCodes(this.motiveCodes);

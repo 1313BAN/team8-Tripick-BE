@@ -1,7 +1,11 @@
 package com.ssafy.live.domain.user.service;
 
-import java.time.Duration;
-
+import com.ssafy.live.domain.user.dao.UserDao;
+import com.ssafy.live.domain.user.dto.*;
+import com.ssafy.live.security.auth.CustomUserDetails;
+import com.ssafy.live.security.jwt.JwtTokenProvider;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,22 +14,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.ssafy.live.domain.user.dao.UserDao;
-import com.ssafy.live.domain.user.dto.AuthResponseDto;
-import com.ssafy.live.domain.user.dto.LoginRequestDto;
-import com.ssafy.live.domain.user.dto.SignupRequestDto;
-import com.ssafy.live.domain.user.dto.UserDto;
-import com.ssafy.live.security.auth.CustomUserDetails;
-import com.ssafy.live.security.jwt.JwtTokenProvider;
-
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
+import java.time.Duration;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private static final String REFRESH_PREFIX = "refresh:"; // prefix 상수
+    private static final String REFRESH_PREFIX = "refresh:";
 
     private final UserDao userDao;
     private final AuthenticationManager authenticationManager;
@@ -37,6 +32,11 @@ public class UserServiceImpl implements UserService {
     public void signup(SignupRequestDto request) {
         UserDto user = request.toUserDto(passwordEncoder);
         userDao.insertUser(user);
+        if (user.getMotiveCodes() != null) {
+            for (Integer code : user.getMotiveCodes()) {
+                userDao.insertUserMotive(user.getId(), code);
+            }
+        }
     }
 
     @Override
@@ -51,7 +51,6 @@ public class UserServiceImpl implements UserService {
 
         String accessToken = jwtTokenProvider.createToken(user);
         String refreshToken = jwtTokenProvider.createRefreshToken(user);
-
         saveRefreshToken(user.getEmail(), refreshToken);
 
         return new AuthResponseDto(accessToken, refreshToken);
@@ -70,14 +69,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getMyUserInfo(CustomUserDetails user) {
-        return userDao.findById(user.getId());
+    public UserDetailDto getMyUserInfo(CustomUserDetails user) {
+        UserDetailDto dto = userDao.selectUserDetail(user.getId());
+        dto.setMotiveCodes(userDao.findUserMotiveCodes(user.getId()));
+        dto.setMotiveNames(userDao.findUserMotiveNames(user.getId()));
+        return dto;
     }
 
     @Override
-    public void updateMyUser(UserDto userDto, CustomUserDetails user) {
-        userDto.setId(user.getId());
-        userDao.updateUser(userDto);
+    public void updateMyUser(UserUpdateDto dto, CustomUserDetails user) {
+        dto.setId(user.getId());
+        userDao.updateUser(dto);
+        userDao.deleteUserMotives(user.getId());
+        if (dto.getMotiveCodes() != null) {
+            for (Integer code : dto.getMotiveCodes()) {
+                userDao.insertUserMotive(user.getId(), code);
+            }
+        }
     }
 
     @Override
@@ -99,10 +107,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void logout(CustomUserDetails user, HttpServletRequest request) {
-        // Refresh 토큰 제거
         redisTemplate.delete(REFRESH_PREFIX + user.getEmail());
 
-        // Access Token 블랙리스트 등록
         String token = resolveAccessToken(request);
         if (token != null && jwtTokenProvider.validateToken(token)) {
             long expiration = jwtTokenProvider.getRemainingTime(token);
@@ -127,8 +133,6 @@ public class UserServiceImpl implements UserService {
 
         String newAccessToken = jwtTokenProvider.createToken(user);
         String newRefreshToken = jwtTokenProvider.createRefreshToken(user);
-
-        // Redis에 새로운 Refresh Token 저장 (TTL 갱신)
         saveRefreshToken(email, newRefreshToken);
 
         return new AuthResponseDto(newAccessToken, newRefreshToken);
@@ -138,5 +142,4 @@ public class UserServiceImpl implements UserService {
         String bearer = request.getHeader("Authorization");
         return (bearer != null && bearer.startsWith("Bearer ")) ? bearer.substring(7) : null;
     }
-
 }

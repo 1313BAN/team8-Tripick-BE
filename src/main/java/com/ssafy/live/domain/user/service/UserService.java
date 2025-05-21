@@ -1,11 +1,7 @@
 package com.ssafy.live.domain.user.service;
 
-import com.ssafy.live.domain.user.dto.AuthResponseDto;
-import com.ssafy.live.domain.user.dto.LoginRequestDto;
-import com.ssafy.live.domain.user.dto.SignupRequestDto;
-import com.ssafy.live.domain.user.dto.UserDto;
+import com.ssafy.live.domain.user.dto.*;
 import com.ssafy.live.security.auth.CustomUserDetails;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 public interface UserService {
@@ -13,9 +9,9 @@ public interface UserService {
 
     AuthResponseDto login(LoginRequestDto request);
 
-    UserDto getMyUserInfo(CustomUserDetails user);
+    UserDetailDto getMyUserInfo(CustomUserDetails user);
 
-    void updateMyUser(UserDto userDto, CustomUserDetails user);
+    void updateMyUser(UserUpdateDto userDto, CustomUserDetails user);
 
     void deleteMyUser(CustomUserDetails user);
 
