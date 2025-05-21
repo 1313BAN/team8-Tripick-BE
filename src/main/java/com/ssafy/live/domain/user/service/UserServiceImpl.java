@@ -18,6 +18,7 @@ import com.ssafy.live.domain.user.dto.UserDto;
 import com.ssafy.live.security.auth.CustomUserDetails;
 import com.ssafy.live.security.jwt.JwtTokenProvider;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -97,8 +98,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void logout(CustomUserDetails user) {
+    public void logout(CustomUserDetails user, HttpServletRequest request) {
+        // Refresh 토큰 제거
         redisTemplate.delete(REFRESH_PREFIX + user.getEmail());
+
+        // Access Token 블랙리스트 등록
+        String token = resolveAccessToken(request);
+        if (token != null && jwtTokenProvider.validateToken(token)) {
+            long expiration = jwtTokenProvider.getRemainingTime(token);
+            redisTemplate.opsForValue().set("blacklist:" + token, "true", Duration.ofMillis(expiration));
+        }
     }
 
     @Override
@@ -116,6 +125,11 @@ public class UserServiceImpl implements UserService {
 
         UserDto user = userDao.findByEmail(email);
         return jwtTokenProvider.createToken(user);
+    }
+
+    private String resolveAccessToken(HttpServletRequest request) {
+        String bearer = request.getHeader("Authorization");
+        return (bearer != null && bearer.startsWith("Bearer ")) ? bearer.substring(7) : null;
     }
 
 }

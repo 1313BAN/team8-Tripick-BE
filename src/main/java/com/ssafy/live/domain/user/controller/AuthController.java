@@ -15,6 +15,7 @@ import com.ssafy.live.domain.user.dto.LoginRequestDto;
 import com.ssafy.live.domain.user.service.UserService;
 import com.ssafy.live.security.auth.CustomUserDetails;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -43,16 +44,16 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@AuthenticationPrincipal CustomUserDetails user) {
-        userService.logout(user);
+    public ResponseEntity<?> logout(@AuthenticationPrincipal CustomUserDetails user,
+            HttpServletRequest request) {
+        userService.logout(user, request);
 
         ResponseCookie deleteCookie = ResponseCookie.from("refreshToken", "")
                 .httpOnly(true)
-                .secure(false) // 개발환경에서는 false로
+                .secure(false)
                 .path("/")
                 .maxAge(0)
-                .sameSite(
-                        "None")
+                .sameSite("None")
                 .build();
 
         return ResponseEntity.ok()

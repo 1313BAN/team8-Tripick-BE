@@ -6,6 +6,8 @@ import com.ssafy.live.domain.user.dto.SignupRequestDto;
 import com.ssafy.live.domain.user.dto.UserDto;
 import com.ssafy.live.security.auth.CustomUserDetails;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 public interface UserService {
     void signup(SignupRequestDto request);
 
@@ -19,7 +21,7 @@ public interface UserService {
 
     void changePassword(String currentPassword, String newPassword, CustomUserDetails user);
 
-    void logout(CustomUserDetails user);
+    void logout(CustomUserDetails user, HttpServletRequest request);
 
     String reissue(String refreshToken);
 }

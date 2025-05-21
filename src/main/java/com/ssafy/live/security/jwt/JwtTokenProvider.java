@@ -104,4 +104,15 @@ public class JwtTokenProvider {
                 .signWith(secretKey, Jwts.SIG.HS256)
                 .compact();
     }
+
+    public long getRemainingTime(String token) {
+        Date expiration = Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getExpiration();
+
+        return expiration.getTime() - System.currentTimeMillis();
+    }
 }
