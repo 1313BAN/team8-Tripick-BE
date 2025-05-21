@@ -252,7 +252,7 @@ CREATE TABLE `users` (
   `nickname` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `name` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `email` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `password` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `password` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `profile_image` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `role` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `bio` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
