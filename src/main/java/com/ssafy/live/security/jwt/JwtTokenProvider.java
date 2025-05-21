@@ -34,22 +34,22 @@ public class JwtTokenProvider {
         this.secretKey = Keys.hmacShaKeyFor(rawSecret.getBytes(StandardCharsets.UTF_8));
     }
 
-    // ✅ 유저 정보를 기반으로 JWT 생성
+    // 유저 정보를 기반으로 JWT 생성
     public String createToken(UserDto user) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + tokenValidTime);
 
         return Jwts.builder()
-                .subject(user.getEmail())                      // sub
-                .claim("id", user.getId())                     // 유저 ID
-                .claim("role", user.getRole())                 // 권한
+                .subject(user.getEmail()) // sub
+                .claim("id", user.getId()) // 유저 ID
+                .claim("role", user.getRole()) // 권한
                 .issuedAt(now)
                 .expiration(expiry)
                 .signWith(secretKey, Jwts.SIG.HS256)
                 .compact();
     }
 
-    // ✅ JWT → Authentication 객체로 변환
+    // JWT → Authentication 객체로 변환
     public Authentication getAuthentication(String token) {
         Claims claims = getClaims(token);
         String email = claims.getSubject();
@@ -60,7 +60,7 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    // ✅ JWT 파싱해서 Claims 추출
+    // JWT 파싱해서 Claims 추출
     private Claims getClaims(String token) {
         return Jwts.parser()
                 .verifyWith(secretKey)
@@ -69,17 +69,19 @@ public class JwtTokenProvider {
                 .getPayload();
     }
 
-    // ✅ 유효성 검사
+    // 유효성 검사
     public boolean validateToken(String token) {
         try {
             Date expiration = getClaims(token).getExpiration();
+            System.out.println("Token Expiration: " + expiration);
             return expiration.after(new Date());
         } catch (JwtException | IllegalArgumentException e) {
+            System.out.println("JWT 검증 실패: " + e.getMessage());
             return false;
         }
     }
 
-    // ✅ 클레임에서 개별 필드 추출 (Optional)
+    // 클레임에서 개별 필드 추출 (Optional)
     public String getEmail(String token) {
         return getClaims(token).getSubject();
     }
@@ -90,5 +92,29 @@ public class JwtTokenProvider {
 
     public Integer getUserId(String token) {
         return getClaims(token).get("id", Integer.class);
+    }
+
+    // refresh 토큰 생성 메서드
+    public String createRefreshToken(UserDto user) {
+        Date now = new Date();
+        Date expiry = new Date(now.getTime() + 1000L * 60 * 60 * 24 * 14); // 14일
+
+        return Jwts.builder()
+                .subject(user.getEmail())
+                .issuedAt(now)
+                .expiration(expiry)
+                .signWith(secretKey, Jwts.SIG.HS256)
+                .compact();
+    }
+
+    public long getRemainingTime(String token) {
+        Date expiration = Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getExpiration();
+
+        return expiration.getTime() - System.currentTimeMillis();
     }
 }
