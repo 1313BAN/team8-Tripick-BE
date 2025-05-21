@@ -1,12 +1,14 @@
 package com.ssafy.live.domain.recommdation.dao;
 
-import com.ssafy.live.domain.recommdation.dto.RecommendationRequestDTO;
-import com.ssafy.live.domain.recommdation.dto.SpotRecommendationDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.ssafy.live.domain.recommendation.dao.RecommendationDao;
+import com.ssafy.live.domain.recommendation.dto.RecommendationRequestDTO;
+import com.ssafy.live.domain.recommendation.dto.SpotRecommendationDTO;
 
 import java.util.List;
 
@@ -73,7 +75,7 @@ public class RecommendationDaoTest {
     @DisplayName("2022년 인기 여행지 추천 테스트")
     void selectPopularSpotsIn2022() {
         // when
-        List<SpotRecommendationDTO> recommendations = recommendationDao.selectPopularSpotsIn2022();
+        List<SpotRecommendationDTO> recommendations = recommendationDao.selectPopularSpotsByYear(2022);
 
         // then
         assertThat(recommendations).isNotNull();

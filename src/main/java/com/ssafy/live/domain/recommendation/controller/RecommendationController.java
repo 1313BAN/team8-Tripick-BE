@@ -1,13 +1,13 @@
-package com.ssafy.live.domain.recommdation.controller;
+package com.ssafy.live.domain.recommendation.controller;
 
 import org.springframework.beans.factory.annotation.Autowired; 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.ssafy.live.domain.recommdation.dto.CategoryRecommendationDTO;
-import com.ssafy.live.domain.recommdation.dto.RecommendationRequestDTO;
-import com.ssafy.live.domain.recommdation.dto.SpotRecommendationDTO;
-import com.ssafy.live.domain.recommdation.service.RecommendationService;
+import com.ssafy.live.domain.recommendation.dto.CategoryRecommendationDTO;
+import com.ssafy.live.domain.recommendation.dto.RecommendationRequestDTO;
+import com.ssafy.live.domain.recommendation.dto.SpotRecommendationDTO;
+import com.ssafy.live.domain.recommendation.service.RecommendationService;
 import com.ssafy.live.security.auth.CustomUserDetails;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -35,6 +35,17 @@ public class RecommendationController {
             @RequestParam Integer minAge, 
             @RequestParam Integer maxAge) {
         
+    	
+    	// 입력값 검증
+    	if (minAge == null || maxAge == null || minAge < 0 || maxAge < 0 || minAge > maxAge) {
+    	    throw new IllegalArgumentException("유효하지 않은 나이 범위입니다.");
+    	}
+    	
+    	if (gender == null || gender.trim().isEmpty() || 
+    	     (!gender.equals("MALE") && !gender.equals("FEMALE"))) {
+    	     throw new IllegalArgumentException("유효하지 않은 성별 값입니다.");
+    	}
+    	
         List<SpotRecommendationDTO> recommendations = 
             recommendationService.getRecommendationsByGenderAndAge(gender, minAge, maxAge);
         
@@ -78,19 +89,7 @@ public class RecommendationController {
         return ResponseEntity.ok(recommendations);
     }
     
-    /**
-     * 5. 특정 지역 기반 추천
-     */
-    @GetMapping("/by-area")
-    public ResponseEntity<List<SpotRecommendationDTO>> getRecommendationsByArea(
-            @RequestParam Integer areaCode,
-            @RequestParam(required = false) Integer siGunGuCode) {
-        
-        List<SpotRecommendationDTO> recommendations = 
-            recommendationService.getRecommendationsByArea(areaCode, siGunGuCode);
-        
-        return ResponseEntity.ok(recommendations);
-    }
+ 
     
     /**
      * 6. 컨텐츠 타입별 추천
@@ -112,6 +111,8 @@ public class RecommendationController {
     @GetMapping("/my-gender-age")
     public ResponseEntity<CategoryRecommendationDTO> getRecommendationsByMyGenderAndAge(
             @AuthenticationPrincipal CustomUserDetails user) {
+    	
+    	
         
         CategoryRecommendationDTO recommendations =
             recommendationService.getRecommendationsByUserGenderAndAgeWithCategory(user.getId());

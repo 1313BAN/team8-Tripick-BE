@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ssafy.live.domain.recommdation.dao.RecommendationDao">
+<mapper namespace="com.ssafy.live.domain.recommendation.dao.RecommendationDao">
 
     <!-- 공통으로 사용될 결과 매핑 정의 -->
-    <resultMap id="spotRecommendationResultMap" type="com.ssafy.live.domain.recommdation.dto.SpotRecommendationDTO">
+    <resultMap id="spotRecommendationResultMap" type="com.ssafy.live.domain.recommendation.dto.SpotRecommendationDTO">
         <id property="no" column="no"/>
         <result property="title" column="title"/>
         <result property="firstImage1" column="first_image1"/>
@@ -86,8 +86,8 @@
         LIMIT 10
     </select>
     
-    <!-- 2022년 가장 인기 있었던 여행지 -->
-    <select id="selectPopularSpotsIn2022" resultMap="spotRecommendationResultMap">
+    <!-- 특정 연도에 가장 인기 있었던 여행지 -->
+    <select id="selectPopularSpotsByYear" resultMap="spotRecommendationResultMap">
         SELECT 
             s.no, 
             s.title, 
@@ -107,7 +107,7 @@
         JOIN
             content_type ct ON s.content_type_id = ct.type_id
         WHERE 
-            YEAR(r.created_at) = 2022
+            YEAR(r.created_at) = #{year}
         GROUP BY 
             s.no, s.title, s.first_image1, s.addr, s.overview, s.latitude, s.longitude, s.content_type_id, ct.type_name
         HAVING 
@@ -118,7 +118,7 @@
     </select>
     
     <!-- 복합 조건 기반 추천 -->
-    <select id="selectSpotsByMultipleCriteria" parameterType="com.ssafy.live.domain.recommdation.dto.RecommendationRequestDTO" resultMap="spotRecommendationResultMap">
+    <select id="selectSpotsByMultipleCriteria" parameterType="com.ssafy.live.domain.recommendation.dto.RecommendationRequestDTO" resultMap="spotRecommendationResultMap">
         SELECT 
             s.no, 
             s.title, 

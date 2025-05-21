@@ -1,4 +1,4 @@
-package com.ssafy.live.domain.recommdation.service;
+package com.ssafy.live.domain.recommendation.service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -6,10 +6,10 @@ import java.util.NoSuchElementException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ssafy.live.domain.recommdation.dao.RecommendationDao;
-import com.ssafy.live.domain.recommdation.dto.CategoryRecommendationDTO;
-import com.ssafy.live.domain.recommdation.dto.RecommendationRequestDTO;
-import com.ssafy.live.domain.recommdation.dto.SpotRecommendationDTO;
+import com.ssafy.live.domain.recommendation.dao.RecommendationDao;
+import com.ssafy.live.domain.recommendation.dto.CategoryRecommendationDTO;
+import com.ssafy.live.domain.recommendation.dto.RecommendationRequestDTO;
+import com.ssafy.live.domain.recommendation.dto.SpotRecommendationDTO;
 import com.ssafy.live.domain.user.dao.UserDao;
 import com.ssafy.live.domain.user.dto.UserDto;
 
@@ -58,7 +58,7 @@ public class RecommendationServiceImpl implements RecommendationService {
     @Override
     @Transactional(readOnly = true)
     public List<SpotRecommendationDTO> getPopularSpotsIn2022() {
-        return recommendationDao.selectPopularSpotsIn2022();
+        return recommendationDao.selectPopularSpotsByYear(2022);
     }
     
     /**
@@ -158,7 +158,7 @@ public class RecommendationServiceImpl implements RecommendationService {
         
         if (userMotives == null || userMotives.isEmpty()) {
             // 여행 동기가 설정되지 않은 경우, 인기 장소 추천
-            List<SpotRecommendationDTO> recommendations = recommendationDao.selectPopularSpotsIn2022();
+            List<SpotRecommendationDTO> recommendations = recommendationDao.selectPopularSpotsByYear(userId);
             categoryDTO.setCategoryName("인기 여행지 추천");
             categoryDTO.setCategoryDescription("다른 여행자들에게 인기 있는 장소");
             categoryDTO.setSpots(recommendations);

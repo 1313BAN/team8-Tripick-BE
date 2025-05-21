@@ -1,4 +1,4 @@
-package com.ssafy.live.domain.recommdation.dto;
+package com.ssafy.live.domain.recommendation.dto;
 
 import java.util.List;
 

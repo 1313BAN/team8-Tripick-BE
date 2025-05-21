@@ -1,11 +1,11 @@
-package com.ssafy.live.domain.recommdation.service;
+package com.ssafy.live.domain.recommendation.service;
 
 import java.util.List;
 import java.util.Map;
 
-import com.ssafy.live.domain.recommdation.dto.CategoryRecommendationDTO;
-import com.ssafy.live.domain.recommdation.dto.RecommendationRequestDTO;
-import com.ssafy.live.domain.recommdation.dto.SpotRecommendationDTO;
+import com.ssafy.live.domain.recommendation.dto.CategoryRecommendationDTO;
+import com.ssafy.live.domain.recommendation.dto.RecommendationRequestDTO;
+import com.ssafy.live.domain.recommendation.dto.SpotRecommendationDTO;
 
 public interface RecommendationService {
     
