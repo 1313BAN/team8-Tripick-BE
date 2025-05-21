@@ -158,9 +158,9 @@ public class RecommendationServiceImpl implements RecommendationService {
         
         if (userMotives == null || userMotives.isEmpty()) {
             // 여행 동기가 설정되지 않은 경우, 인기 장소 추천
-            List<SpotRecommendationDTO> recommendations = recommendationDao.selectPopularSpotsByYear(userId);
+            List<SpotRecommendationDTO> recommendations = recommendationDao.selectPopularSpotsByYear(2022);
             categoryDTO.setCategoryName("인기 여행지 추천");
-            categoryDTO.setCategoryDescription("다른 여행자들에게 인기 있는 장소");
+            categoryDTO.setCategoryDescription("다른 여행자들에게 인기 있는 장소 <동기가 설정되어 있지 않습니다.>");
             categoryDTO.setSpots(recommendations);
         } else {
             // 첫 번째 여행 동기를 이용한 추천
