@@ -262,7 +262,7 @@ CREATE TABLE `users` (
   `updated_at` datetime DEFAULT NULL,
   `accompany_code` int DEFAULT NULL,
   `residence_sido_code` int DEFAULT NULL,
-  `real_user` tinyint(1) DEFAULT NULL,
+  `real_user` tinyint(1) DEFAULT 1,
   PRIMARY KEY (`id`),
   KEY `fk_users_accompany` (`accompany_code`),
   KEY `fk_users_sidos` (`residence_sido_code`),
