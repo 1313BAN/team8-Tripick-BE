@@ -151,6 +151,7 @@ public class UserIntegrationTest {
     @Order(8)
     void deleteUserTest() {
         jwtToken = loginAndGetToken("jwtuser@example.com", "newpass123!"); // 비번 변경됐으므로 new password 사용
+        System.out.println("새로 발급받은 AccessToken: " + jwtToken);
         HttpEntity<?> entity = new HttpEntity<>(authHeader());
 
         ResponseEntity<Void> res = rest.exchange(getUserUrl("/me"), HttpMethod.DELETE, entity, Void.class);

@@ -64,8 +64,19 @@ public class AuthController {
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(@CookieValue("refreshToken") String refreshToken) {
         try {
-            String newAccessToken = userService.reissue(refreshToken);
-            return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
+            AuthResponseDto tokens = userService.reissueWithNewRefresh(refreshToken);
+
+            ResponseCookie cookie = ResponseCookie.from("refreshToken", tokens.getRefreshToken())
+                    .httpOnly(true)
+                    .secure(false)
+                    .path("/")
+                    .maxAge(Duration.ofDays(14))
+                    .sameSite("Lax")
+                    .build();
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                    .body(Map.of("accessToken", tokens.getAccessToken()));
         } catch (AccessDeniedException e) {
             return ResponseEntity.status(401).body(e.getMessage());
         }

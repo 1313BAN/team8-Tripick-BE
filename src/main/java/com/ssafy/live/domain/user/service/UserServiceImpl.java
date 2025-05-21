@@ -111,20 +111,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String reissue(String refreshToken) {
-        if (!jwtTokenProvider.validateToken(refreshToken)) {
+    public AuthResponseDto reissueWithNewRefresh(String oldRefreshToken) {
+        if (!jwtTokenProvider.validateToken(oldRefreshToken)) {
             throw new AccessDeniedException("Refresh Token이 만료되었습니다.");
         }
 
-        String email = jwtTokenProvider.getEmail(refreshToken);
+        String email = jwtTokenProvider.getEmail(oldRefreshToken);
         String storedToken = redisTemplate.opsForValue().get(REFRESH_PREFIX + email);
 
-        if (storedToken == null || !storedToken.equals(refreshToken)) {
+        if (storedToken == null || !storedToken.equals(oldRefreshToken)) {
             throw new AccessDeniedException("Refresh Token이 유효하지 않습니다.");
         }
 
         UserDto user = userDao.findByEmail(email);
-        return jwtTokenProvider.createToken(user);
+
+        String newAccessToken = jwtTokenProvider.createToken(user);
+        String newRefreshToken = jwtTokenProvider.createRefreshToken(user);
+
+        // Redis에 새로운 Refresh Token 저장 (TTL 갱신)
+        saveRefreshToken(email, newRefreshToken);
+
+        return new AuthResponseDto(newAccessToken, newRefreshToken);
     }
 
     private String resolveAccessToken(HttpServletRequest request) {

@@ -73,8 +73,10 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         try {
             Date expiration = getClaims(token).getExpiration();
+            System.out.println("Token Expiration: " + expiration);
             return expiration.after(new Date());
         } catch (JwtException | IllegalArgumentException e) {
+            System.out.println("JWT 검증 실패: " + e.getMessage());
             return false;
         }
     }

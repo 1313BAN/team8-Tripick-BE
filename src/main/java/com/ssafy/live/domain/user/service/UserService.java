@@ -23,5 +23,5 @@ public interface UserService {
 
     void logout(CustomUserDetails user, HttpServletRequest request);
 
-    String reissue(String refreshToken);
+    AuthResponseDto reissueWithNewRefresh(String oldRefreshToken);
 }
