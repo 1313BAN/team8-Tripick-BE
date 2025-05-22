@@ -51,7 +51,7 @@ public class SecurityConfig {
                                                                 "/api/auth/reissue",
                                                                 "/api/users/signup",
                                                                 "/api/reviews/**",
-                                                                "/api/recommandentions/**",
+                                                                "/api/recommendations/**",
                                                                 "/api/spots/**",
                                                                 "/api/public/**")
                                                 .permitAll()
