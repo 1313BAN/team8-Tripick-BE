@@ -123,7 +123,8 @@ public class UserIntegrationTest {
     @Order(5)
     void getMyInfoTest() {
         HttpEntity<?> entity = new HttpEntity<>(authHeader());
-        ResponseEntity<UserDetailDto> res = rest.exchange(getUserUrl("/me"), HttpMethod.GET, entity, UserDetailDto.class);
+        ResponseEntity<UserDetailDto> res = rest.exchange(getUserUrl("/me"), HttpMethod.GET, entity,
+                UserDetailDto.class);
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(res.getBody().getEmail()).isEqualTo("jwtuser@example.com");
     }
@@ -149,15 +150,16 @@ public class UserIntegrationTest {
     @Order(8)
     void deleteUserTest() {
         jwtToken = loginAndGetToken("jwtuser@example.com", "newpass123!");
-        System.out.println("새로 발급받은 AccessToken: " + jwtToken);
         HttpEntity<?> entity = new HttpEntity<>(authHeader());
 
         ResponseEntity<Void> res = rest.exchange(getUserUrl("/me"), HttpMethod.DELETE, entity, Void.class);
+
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
     private String extractCookieValue(String cookieHeader, String cookieName) {
-        if (cookieHeader == null) return null;
+        if (cookieHeader == null)
+            return null;
         for (String cookie : cookieHeader.split(";")) {
             if (cookie.trim().startsWith(cookieName + "=")) {
                 return cookie.trim().substring((cookieName + "=").length());
@@ -178,7 +180,6 @@ public class UserIntegrationTest {
 
         ResponseEntity<Map> response = rest.exchange(
                 getAuthUrl("/login"), HttpMethod.POST, entity, Map.class);
-
         return (String) response.getBody().get("accessToken");
     }
 }

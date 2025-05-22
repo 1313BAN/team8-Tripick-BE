@@ -25,7 +25,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain chain) throws ServletException, IOException {
 
         String token = resolveToken(request);
-
         try {
             if (token != null && jwtTokenProvider.validateToken(token)) {
                 // 블랙리스트 검사

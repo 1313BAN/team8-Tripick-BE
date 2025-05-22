@@ -18,6 +18,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import java.util.UUID;
 
 @Component
 public class JwtTokenProvider {
@@ -35,14 +36,16 @@ public class JwtTokenProvider {
     }
 
     // 유저 정보를 기반으로 JWT 생성
+
     public String createToken(UserDto user) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + tokenValidTime);
 
         return Jwts.builder()
-                .subject(user.getEmail()) // sub
-                .claim("id", user.getId()) // 유저 ID
-                .claim("role", user.getRole()) // 권한
+                .subject(user.getEmail())
+                .claim("id", user.getId())
+                .claim("role", user.getRole())
+                .claim("jti", UUID.randomUUID().toString()) // 고유한 ID로 매번 다른 토큰 생성
                 .issuedAt(now)
                 .expiration(expiry)
                 .signWith(secretKey, Jwts.SIG.HS256)
@@ -98,9 +101,11 @@ public class JwtTokenProvider {
     public String createRefreshToken(UserDto user) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + 1000L * 60 * 60 * 24 * 14); // 14일
+        String jti = UUID.randomUUID().toString();
 
         return Jwts.builder()
                 .subject(user.getEmail())
+                .claim("jti", jti)
                 .issuedAt(now)
                 .expiration(expiry)
                 .signWith(secretKey, Jwts.SIG.HS256)
