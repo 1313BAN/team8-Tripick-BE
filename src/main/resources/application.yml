@@ -22,7 +22,21 @@ spring:
     redis:
       host: localhost
       port: 6379
-      # password: your_redis_password (필요 시 추가)
+
+  ai:
+    openai:
+      api-key: 
+      chat:
+        options:
+          model: gpt-4o
+          temperature: 0.7
+          max-completion-tokens: 10000
+
+    vectorstore:
+      redis:
+        initialize-schema: false
+        index: ssafy-index
+        prefix: "ssafy:"
 
 mybatis:
   mapper-locations: classpath:/domain/**/mapper/*.xml
@@ -34,3 +48,4 @@ jwt:
 logging:
   level:
     com.ssafy: trace
+    org.springframework.ai.chat.client.advisor: debug

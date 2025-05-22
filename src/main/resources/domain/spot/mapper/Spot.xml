@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.ssafy.live.domain.spot.dao.SpotDao">
 
     <resultMap id="SpotMap" type="com.ssafy.live.domain.spot.dto.SpotDto">
         <!-- 기본 키 필드 매핑 (프라이머리 키) -->
         <id property="no" column="no" />
-        
+
         <!-- 일반 필드 매핑 (property: 자바 객체 필드명, column: DB 컬럼명) -->
         <result property="title" column="title" />
         <result property="contentTypeId" column="content_type_id" />
@@ -24,106 +22,35 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <!-- 모든 관광지 조회 -->
-    <select id="selectAllSpots" resultMap="SpotMap">
-        SELECT
-            no,
-            title,
-            content_type_id,
-            area_code,
-            si_gun_gu_code,
-            first_image1,
-            first_image2,
-            latitude,
-            longitude,
-            addr,
-            homepage,
-            overview
-        FROM
-            trippick.spots
-        ORDER BY
-            no
-    </select>
-    
+    <select id="selectAllSpots" resultMap="SpotMap"> SELECT no, title, content_type_id, area_code,
+        si_gun_gu_code, first_image1, first_image2, latitude, longitude, addr, homepage, overview
+        FROM trippick.spots ORDER BY no </select>
+
     <!-- 특정 관광지 조회 (no 기준) -->
-    <select id="selectSpotByNo" parameterType="int" resultMap="SpotMap">
-        SELECT
-            no,
-            title,
-            content_type_id,
-            area_code,
-            si_gun_gu_code,
-            first_image1,
-            first_image2,
-            latitude,
-            longitude,
-            addr,
-            homepage,
-            overview
-        FROM
-            trippick.spots
-        WHERE
-            no = #{no}
-    </select>
+    <select id="selectSpotByNo" parameterType="int" resultMap="SpotMap"> SELECT no, title,
+        content_type_id, area_code, si_gun_gu_code, first_image1, first_image2, latitude, longitude,
+        addr, homepage, overview FROM trippick.spots WHERE no = #{no} </select>
 
     <!-- 관광지 등록 -->
-    <insert id="insertSpot" parameterType="com.ssafy.live.domain.spot.dto.SpotDto" useGeneratedKeys="true" keyProperty="no">
-        INSERT INTO trippick.spots (
-            title,
-            content_type_id,
-            area_code,
-            si_gun_gu_code,
-            first_image1,
-            first_image2,
-            latitude,
-            longitude,
-            addr,
-            homepage,
-            overview
-        ) VALUES (
-            #{title},
-            #{contentTypeId},
-            #{areaCode},
-            #{siGunGuCode},
-            #{firstImage1},
-            #{firstImage2},
-            #{latitude},
-            #{longitude},
-            #{addr},
-            #{homepage},
-            #{overview}
-        )
-    </insert>
-    
+    <insert id="insertSpot" parameterType="com.ssafy.live.domain.spot.dto.SpotDto"
+        useGeneratedKeys="true" keyProperty="no"> INSERT INTO trippick.spots ( title,
+        content_type_id, area_code, si_gun_gu_code, first_image1, first_image2, latitude, longitude,
+        addr, homepage, overview ) VALUES ( #{title}, #{contentTypeId}, #{areaCode}, #{siGunGuCode},
+        #{firstImage1}, #{firstImage2}, #{latitude}, #{longitude}, #{addr}, #{homepage}, #{overview}
+        ) </insert>
+
     <!-- 관광지 삭제 -->
-    <delete id="deleteSpot" parameterType="int">
-        DELETE FROM trippick.spots
-        WHERE no = #{no}
-    </delete>
-    
+    <delete id="deleteSpot" parameterType="int"> DELETE FROM trippick.spots WHERE no = #{no} </delete>
+
     <!-- 경계 내 관광지 검색 -->
-    <select id="findInBounds" resultMap="SpotMap" parameterType="map">
-        SELECT
-            no,
-            title,
-            content_type_id,
-            area_code,
-            si_gun_gu_code,
-            first_image1,
-            first_image2,
-            latitude,
-            longitude,
-            addr,
-            homepage,
-            overview
-        FROM
-            trippick.spots
-        WHERE
-            latitude BETWEEN #{swLat} AND #{neLat}
-            AND longitude BETWEEN #{swLng} AND #{neLng}
-            <if test="type != null">
-                AND content_type_id = #{type}
-            </if>
-        ORDER BY no
-        LIMIT 300
-    </select>
+    <select id="findInBounds" resultMap="SpotMap" parameterType="map"> SELECT no, title,
+        content_type_id, area_code, si_gun_gu_code, first_image1, first_image2, latitude, longitude,
+        addr, homepage, overview FROM trippick.spots WHERE latitude BETWEEN #{swLat} AND #{neLat}
+        AND longitude BETWEEN #{swLng} AND #{neLng} <if test="type != null"> AND content_type_id =
+        #{type} </if> ORDER BY no LIMIT 300 </select>
+
+    <!-- content_type과 조인해서 vector에 넣을 데이터 조회 -->
+    <select id="selectAllForVector" resultType="com.ssafy.live.domain.spot.dto.SpotVectorDto">
+        SELECT s.no, s.title, s.addr, ct.type_name FROM trippick.spots s JOIN trippick.content_type
+        ct ON s.content_type_id = ct.type_id </select>
 </mapper>
