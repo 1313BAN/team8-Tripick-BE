@@ -251,7 +251,7 @@ CREATE TABLE `users` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nickname` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `password` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `profile_image` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `role` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
@@ -264,11 +264,13 @@ CREATE TABLE `users` (
   `residence_sido_code` int DEFAULT NULL,
   `real_user` tinyint(1) DEFAULT 1,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_users_email` (`email`),
   KEY `fk_users_accompany` (`accompany_code`),
   KEY `fk_users_sidos` (`residence_sido_code`),
   CONSTRAINT `fk_users_accompany` FOREIGN KEY (`accompany_code`) REFERENCES `accompany` (`accompany_code`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `fk_users_sidos` FOREIGN KEY (`residence_sido_code`) REFERENCES `sidos` (`sido_code`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=4012478 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

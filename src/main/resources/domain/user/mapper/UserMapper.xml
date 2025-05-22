@@ -1,11 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper
-  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.ssafy.live.domain.user.dao.UserDao">
 
-    <!-- UserDto 매핑 -->
     <resultMap id="UserMap" type="com.ssafy.live.domain.user.dto.UserDto">
         <id property="id" column="id" />
         <result property="email" column="email" />
@@ -17,47 +14,61 @@
         <result property="bio" column="bio" />
         <result property="gender" column="gender" />
         <result property="age" column="age" />
+        <result property="accompanyCode" column="accompany_code" />
+        <result property="residenceSidoCode" column="residence_sido_code" />
+        <result property="realUser" column="real_user" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
     </resultMap>
 
-    <!-- 회원 가입 -->
-    <insert id="insertUser">
-	    INSERT INTO users (email, password, nickname, name, gender, role, age)
-	    VALUES (#{email}, #{password}, #{nickname}, #{name}, #{gender}, #{role}, #{age})
-	</insert>
+    <resultMap id="UserDetailMap" type="com.ssafy.live.domain.user.dto.UserDetailDto">
+        <id property="id" column="id" />
+        <result property="email" column="email" />
+        <result property="nickname" column="nickname" />
+        <result property="name" column="name" />
+        <result property="gender" column="gender" />
+        <result property="age" column="age" />
+        <result property="profileImage" column="profile_image" />
+        <result property="bio" column="bio" />
+        <result property="accompanyCode" column="accompany_code" />
+        <result property="accompanyLabel" column="accompany_label" />
+        <result property="residenceSidoCode" column="residence_sido_code" />
+        <result property="residenceSidoName" column="sido_name" />
+        <result property="createdAt" column="created_at" />
+    </resultMap>
 
-    <!-- 이메일로 사용자 조회 -->
-    <select id="findByEmail" resultMap="UserMap">
-        SELECT * FROM users WHERE email = #{email}
-    </select>
+    <insert id="insertUser" parameterType="com.ssafy.live.domain.user.dto.UserDto"
+        useGeneratedKeys="true" keyProperty="id"> INSERT INTO users (email, password, nickname,
+        name, gender, role, age, profile_image, bio, accompany_code, residence_sido_code, real_user)
+        VALUES (#{email}, #{password}, #{nickname}, #{name}, #{gender}, #{role}, #{age},
+        #{profileImage}, #{bio}, #{accompanyCode}, #{residenceSidoCode}, #{realUser}) </insert>
+    <insert id="insertUserMotive"> INSERT INTO user_tralve_motive (user_id, motive_code) VALUES
+        (#{userId}, #{motiveCode}) </insert>
 
-    <!-- ID로 사용자 조회 -->
-    <select id="findById" resultMap="UserMap">
-        SELECT * FROM users WHERE id = #{id}
-    </select>
+    <delete id="deleteUserMotives"> DELETE FROM user_tralve_motive WHERE user_id = #{userId} </delete>
 
-	<update id="updateUser">
-	    UPDATE users
-	    SET
-	        nickname = #{nickname},
-	        name = #{name},
-	        profile_image = #{profileImage},
-	        role = #{role},
-	        bio = #{bio},
-	        gender = #{gender},
-	        age = #{age},
-	        updated_at = CURRENT_TIMESTAMP
-	    WHERE id = #{id}
-	</update>
+    <select id="findByEmail" resultMap="UserMap"> SELECT * FROM users WHERE email = #{email} </select>
 
-    <delete id="deleteUser">
-        DELETE FROM users WHERE id = #{id}
-    </delete>
-    
-    <update id="updatePassword">
-    	UPDATE users
-    	SET password = #{password}, updated_at = CURRENT_TIMESTAMP
-    	WHERE id = #{id}
-	</update>
-    
-    
+    <select id="findById" resultMap="UserMap"> SELECT * FROM users WHERE id = #{id} </select>
+
+    <select id="selectUserDetail" resultMap="UserDetailMap"> SELECT u.*, a.accompany_label,
+        s.sido_name FROM users u LEFT JOIN accompany a ON u.accompany_code = a.accompany_code LEFT
+        JOIN sidos s ON u.residence_sido_code = s.sido_code WHERE u.id = #{id} </select>
+
+    <update id="updateUser"> UPDATE users SET nickname = #{nickname}, name = #{name}, profile_image
+        = #{profileImage}, bio = #{bio}, gender = #{gender}, age = #{age}, accompany_code =
+        #{accompanyCode}, residence_sido_code = #{residenceSidoCode}, updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id} </update>
+
+    <delete id="deleteUser"> DELETE FROM users WHERE id = #{id} </delete>
+
+    <update id="updatePassword"> UPDATE users SET password = #{password}, updated_at =
+        CURRENT_TIMESTAMP WHERE id = #{id} </update>
+
+    <select id="findUserMotiveCodes" resultType="int"> SELECT motive_code FROM user_tralve_motive
+        WHERE user_id = #{userId} </select>
+
+    <select id="findUserMotiveNames" resultType="string"> SELECT m.motive_name FROM
+        user_tralve_motive utm JOIN motive m ON utm.motive_code = m.motive_code WHERE
+        utm.user_id = #{userId} </select>
 </mapper>

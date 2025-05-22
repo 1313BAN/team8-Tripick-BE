@@ -2,7 +2,7 @@ package com.ssafy.live.domain.user.controller;
 
 import com.ssafy.live.domain.user.dto.LoginRequestDto;
 import com.ssafy.live.domain.user.dto.SignupRequestDto;
-import com.ssafy.live.domain.user.dto.UserDto;
+import com.ssafy.live.domain.user.dto.UserDetailDto;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -29,11 +29,10 @@ public class UserIntegrationTest {
 
     @BeforeEach
     void setup() {
-        // 4xx, 5xx 응답을 예외로 던지지 않게 설정
         rest.setErrorHandler(new DefaultResponseErrorHandler() {
             @Override
             public void handleError(ClientHttpResponse response) throws IOException {
-                // 아무 동작 안 함 → 예외 대신 ResponseEntity 반환됨
+                // 예외 발생하지 않게
             }
         });
     }
@@ -89,7 +88,6 @@ public class UserIntegrationTest {
         jwtToken = (String) response.getBody().get("accessToken");
         assertThat(jwtToken).isNotNull();
 
-        // refreshToken from Set-Cookie
         String setCookie = response.getHeaders().getFirst(HttpHeaders.SET_COOKIE);
         refreshToken = extractCookieValue(setCookie, "refreshToken");
         assertThat(refreshToken).isNotBlank();
@@ -125,7 +123,7 @@ public class UserIntegrationTest {
     @Order(5)
     void getMyInfoTest() {
         HttpEntity<?> entity = new HttpEntity<>(authHeader());
-        ResponseEntity<UserDto> res = rest.exchange(getUserUrl("/me"), HttpMethod.GET, entity, UserDto.class);
+        ResponseEntity<UserDetailDto> res = rest.exchange(getUserUrl("/me"), HttpMethod.GET, entity, UserDetailDto.class);
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(res.getBody().getEmail()).isEqualTo("jwtuser@example.com");
     }
@@ -150,7 +148,7 @@ public class UserIntegrationTest {
     @Test
     @Order(8)
     void deleteUserTest() {
-        jwtToken = loginAndGetToken("jwtuser@example.com", "newpass123!"); // 비번 변경됐으므로 new password 사용
+        jwtToken = loginAndGetToken("jwtuser@example.com", "newpass123!");
         System.out.println("새로 발급받은 AccessToken: " + jwtToken);
         HttpEntity<?> entity = new HttpEntity<>(authHeader());
 
@@ -159,8 +157,7 @@ public class UserIntegrationTest {
     }
 
     private String extractCookieValue(String cookieHeader, String cookieName) {
-        if (cookieHeader == null)
-            return null;
+        if (cookieHeader == null) return null;
         for (String cookie : cookieHeader.split(";")) {
             if (cookie.trim().startsWith(cookieName + "=")) {
                 return cookie.trim().substring((cookieName + "=").length());

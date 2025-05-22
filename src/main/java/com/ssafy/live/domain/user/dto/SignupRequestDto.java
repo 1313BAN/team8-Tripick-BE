@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class SignupRequestDto {
@@ -13,16 +15,25 @@ public class SignupRequestDto {
     private String name;
     private String gender;
     private int age;
+    private String bio;
+    private Integer accompanyCode;
+    private Integer residenceSidoCode;
+    private List<Integer> motiveCodes;
 
     public UserDto toUserDto(PasswordEncoder encoder) {
         UserDto user = new UserDto();
         user.setEmail(this.email);
-        user.setPassword(encoder.encode(this.password)); // 🔐 암호화
+        user.setPassword(encoder.encode(this.password));
         user.setNickname(this.nickname);
         user.setName(this.name);
         user.setGender(this.gender);
         user.setAge(this.age);
-        user.setRole("USER"); // 기본 사용자 권한
+        user.setBio(this.bio);
+        user.setAccompanyCode(this.accompanyCode);
+        user.setResidenceSidoCode(this.residenceSidoCode);
+        user.setMotiveCodes(this.motiveCodes);
+        user.setRole("USER");
+        user.setRealUser(true); // default로 true 설정
         return user;
     }
 }
