@@ -168,7 +168,7 @@
         GROUP BY 
             s.no, s.title, s.first_image1, s.addr, s.overview, s.latitude, s.longitude, s.content_type_id, ct.type_name
         HAVING 
-            COUNT(r.review_id) > 0
+            COUNT(r.review_id) > 5
         ORDER BY 
             avg_rating DESC, review_count DESC
         LIMIT #{criteria.limit}
