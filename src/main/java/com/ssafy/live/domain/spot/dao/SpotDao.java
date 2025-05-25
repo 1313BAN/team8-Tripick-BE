@@ -45,4 +45,11 @@ public interface SpotDao {
         @Param("neLng") double neLng, 
         @Param("type") Integer type
     );
+    /**
+     * 관광지 검색 (이름, 주소 기반)
+     */
+    List<BasicSpotResponseDto> searchSpots(
+        @Param("keyword") String keyword,
+        @Param("type") Integer type
+    );
 }

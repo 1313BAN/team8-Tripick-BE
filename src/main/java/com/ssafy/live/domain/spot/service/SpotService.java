@@ -37,4 +37,11 @@ public interface SpotService {
      * @return 경계 내 관광지 기본 정보 리스트
      */
     List<BasicSpotResponseDto> getBasicSpotsInBoundary(double swLat, double swLng, double neLat, double neLng, Integer type);
+
+
+    /**
+     * 관광지 검색 (이름, 주소 기반)
+     */
+    List<BasicSpotResponseDto> searchSpots(String keyword, Integer type);
+
 }

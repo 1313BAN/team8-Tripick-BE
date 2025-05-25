@@ -106,5 +106,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         ORDER BY s.no
         LIMIT 300
     </select>
+    
+        <!-- 관광지 검색 (이름, 주소 기반) -->
+    <select id="searchSpots" resultMap="BasicSpotMap" parameterType="map">
+        SELECT 
+            s.no,
+            s.title,
+            s.content_type_id,
+            s.latitude,
+            s.longitude,
+            COALESCE(AVG(r.rating), 0) as average_rating,
+            COUNT(r.review_id) as review_count
+        FROM spots s
+        LEFT JOIN reviews r ON s.no = r.no
+        WHERE (s.title LIKE CONCAT('%', #{keyword}, '%') 
+               OR s.addr LIKE CONCAT('%', #{keyword}, '%'))
+        <if test="type != null">
+            AND s.content_type_id = #{type}
+        </if>
+        GROUP BY s.no, s.title, s.content_type_id, s.latitude, s.longitude
+        ORDER BY average_rating DESC, review_count DESC
+        LIMIT 100
+    </select>
+    
+    
 
 </mapper>

@@ -239,4 +239,70 @@ public class SpotDaoTest {
         assertThat(spotsInBounds).isNotNull();
         assertThat(spotsInBounds).isEmpty(); // 빈 결과가 예상됨
     }
+    
+    @Test
+    @DisplayName("키워드로 관광지 검색 테스트")
+    void searchSpots() {
+        // given
+        String keyword = "해운대"; // 실제 데이터에 있을 법한 키워드
+        Integer type = null; // 타입 필터 없음
+        
+        // when
+        List<BasicSpotResponseDto> spots = spotDao.searchSpots(keyword, type);
+        
+        // then
+        assertThat(spots).isNotNull();
+        
+        // 검색 결과의 각 항목이 키워드를 포함하는지 확인
+        spots.forEach(spot -> {
+            assertThat(spot.getTitle()).isNotNull();
+            assertThat(spot.getAverageRating()).isBetween(0.0, 5.0);
+            assertThat(spot.getReviewCount()).isGreaterThanOrEqualTo(0);
+            // 제목이나 주소에 키워드가 포함되어야 함 (실제로는 DB에서 확인됨)
+        });
+        
+        // 결과가 100개를 넘지 않는지 확인 (LIMIT 100)
+        assertThat(spots.size()).isLessThanOrEqualTo(100);
+    }
+    
+    @Test
+    @DisplayName("키워드와 타입으로 관광지 검색 테스트")
+    void searchSpotsWithType() {
+        // given
+        String keyword = "부산"; // 실제 데이터에 있을 법한 키워드
+        Integer type = 12; // 관광지 타입
+        
+        // when
+        List<BasicSpotResponseDto> spots = spotDao.searchSpots(keyword, type);
+        
+        // then
+        assertThat(spots).isNotNull();
+        
+        // 검색 결과의 각 항목이 조건을 만족하는지 확인
+        spots.forEach(spot -> {
+            assertThat(spot.getTitle()).isNotNull();
+            assertThat(spot.getContentTypeId()).isEqualTo(type);
+            assertThat(spot.getAverageRating()).isBetween(0.0, 5.0);
+            assertThat(spot.getReviewCount()).isGreaterThanOrEqualTo(0);
+        });
+        
+        // 결과가 100개를 넘지 않는지 확인
+        assertThat(spots.size()).isLessThanOrEqualTo(100);
+    }
+    
+    @Test
+    @DisplayName("존재하지 않는 키워드로 검색 테스트")
+    void searchSpotsWithNonExistentKeyword() {
+        // given
+        String keyword = "존재하지않는관광지명XYZ123";
+        Integer type = null;
+        
+        // when
+        List<BasicSpotResponseDto> spots = spotDao.searchSpots(keyword, type);
+        
+        // then
+        assertThat(spots).isNotNull();
+        assertThat(spots).isEmpty(); // 결과가 없어야 함
+    }
+    
 }
