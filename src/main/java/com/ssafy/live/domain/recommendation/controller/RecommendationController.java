@@ -1,6 +1,7 @@
 package com.ssafy.live.domain.recommendation.controller;
 
-import org.springframework.beans.factory.annotation.Autowired; 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,21 +11,24 @@ import com.ssafy.live.domain.recommendation.dto.SpotRecommendationDTO;
 import com.ssafy.live.domain.recommendation.service.RecommendationService;
 import com.ssafy.live.security.auth.CustomUserDetails;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
 @RestController 
 @RequestMapping("/api/recommendations") 
+@RequiredArgsConstructor
+@Slf4j
 public class RecommendationController {
     
     private final RecommendationService recommendationService;
-    
-    @Autowired
-    public RecommendationController(RecommendationService recommendationService) {
-        this.recommendationService = recommendationService;
-    }
+    private final RedisTemplate<String, Object> objectRedisTemplate; // 캐싱용
+
     
     /**
      * 1. 성별과 나이에 따른 여행지 추천
@@ -76,17 +80,72 @@ public class RecommendationController {
         return ResponseEntity.ok(popularSpots);
     }
     
-    /**
-     * 4. 복합 조건 기반 추천 (동기, 나이, 성별, 관광지 타입 등)
-     */
     @PostMapping("/complex")
     public ResponseEntity<List<SpotRecommendationDTO>> getComplexRecommendations(
             @RequestBody RecommendationRequestDTO requestDTO) {
         
+        // 캐시 키 생성
+        String cacheKey = "recommendations:" + requestDTO.toString().hashCode();
+        log.info("요청 처리 시작 - 캐시 키: {}", cacheKey);
+        
+        try {
+            // Cache Aside Pattern - Read
+            Object cachedResult = objectRedisTemplate.opsForValue().get(cacheKey);
+            if (cachedResult != null) {
+                log.info("✅ 캐시 히트! 캐시된 결과 반환");
+                @SuppressWarnings("unchecked")
+                List<SpotRecommendationDTO> recommendations = (List<SpotRecommendationDTO>) cachedResult;
+                return ResponseEntity.ok(recommendations);
+            }
+        } catch (Exception e) {
+            log.warn("⚠️ 캐시 조회 실패, DB 조회로 진행: {}", e.getMessage());
+        }
+        
+        // Cache Aside Pattern - DB 조회
+        log.info("🔍 캐시 미스! DB에서 추천 결과 조회 시작");
         List<SpotRecommendationDTO> recommendations = 
             recommendationService.getComplexRecommendations(requestDTO);
         
+        try {
+            // Cache Aside Pattern - Write  
+            objectRedisTemplate.opsForValue().set(cacheKey, recommendations, Duration.ofMinutes(10));
+            log.info("💾 DB 조회 결과를 캐시에 저장 완료 (TTL: 10분, 결과 개수: {}개)", recommendations.size());
+        } catch (Exception e) {
+            log.warn("⚠️ 캐시 저장 실패 (결과는 정상 반환): {}", e.getMessage());
+        }
+        
         return ResponseEntity.ok(recommendations);
+    }
+    
+    /**
+     * 캐시 관리 API (개발/테스트용)
+     */
+    @DeleteMapping("/cache")
+    public ResponseEntity<String> clearRecommendationCache() {
+        try {
+            var keys = objectRedisTemplate.keys("recommendations:*");
+            if (keys != null && !keys.isEmpty()) {
+                objectRedisTemplate.delete(keys);
+                log.info("🗑️ 추천 캐시 {} 개 삭제 완료", keys.size());
+                return ResponseEntity.ok("캐시 " + keys.size() + "개 삭제 완료");
+            } else {
+                return ResponseEntity.ok("삭제할 캐시가 없습니다");
+            }
+        } catch (Exception e) {
+            log.error("❌ 캐시 삭제 실패: {}", e.getMessage());
+            return ResponseEntity.internalServerError().body("캐시 삭제 실패");
+        }
+    }
+    
+    @GetMapping("/cache/status")
+    public ResponseEntity<String> getCacheStatus() {
+        try {
+            var keys = objectRedisTemplate.keys("recommendations:*");
+            int count = keys != null ? keys.size() : 0;
+            return ResponseEntity.ok("현재 캐시된 추천 결과: " + count + "개");
+        } catch (Exception e) {
+            return ResponseEntity.ok("Redis 연결 상태 확인 필요");
+        }
     }
     
  
