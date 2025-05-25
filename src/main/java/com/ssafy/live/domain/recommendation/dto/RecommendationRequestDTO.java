@@ -32,4 +32,19 @@ public class RecommendationRequestDTO {
             limit != null ? limit : 10
         );
     }
+    
+    // 해시 키 생성
+    public String generateMeaningfulCacheKey() {
+        StringBuilder key = new StringBuilder("recommendations");
+        
+        if (gender != null) key.append(":gender:").append(gender);
+        if (minAge != null && maxAge != null) key.append(":age:").append(minAge).append("-").append(maxAge);
+        if (motiveCode != null) key.append(":motive:").append(motiveCode);
+        if (contentTypeId != null) key.append(":content:").append(contentTypeId);
+        if (areaCode != null) key.append(":area:").append(areaCode);
+        key.append(":limit:").append(limit);
+        
+        return key.toString();
+    }
+    
 }

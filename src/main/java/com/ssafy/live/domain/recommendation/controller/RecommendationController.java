@@ -85,7 +85,7 @@ public class RecommendationController {
             @RequestBody RecommendationRequestDTO requestDTO) {
         
         // 캐시 키 생성
-        String cacheKey = "recommendations:" + requestDTO.toString().hashCode();
+    	String cacheKey = requestDTO.generateMeaningfulCacheKey();
         log.info("요청 처리 시작 - 캐시 키: {}", cacheKey);
         
         try {
