@@ -89,4 +89,27 @@ public class SpotServiceImpl implements SpotService {
     public List<BasicSpotResponseDto> getBasicSpotsInBoundary(double swLat, double swLng, double neLat, double neLng, Integer type) {
         return spotDao.selectBasicSpotsInBoundary(swLat, swLng, neLat, neLng, type);
     }
+    
+    
+    
+    /**
+     * 관광지 검색 (이름, 주소 기반)
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<BasicSpotResponseDto> searchSpots(String keyword, Integer type) {
+        // 키워드 검사
+        if (keyword == null || keyword.trim().isEmpty()) {
+            throw new IllegalArgumentException("검색 키워드가 필요합니다.");
+        }
+        
+        return spotDao.searchSpots(keyword.trim(), type);
+    }
+    
+    
+    
+    
+    
+    
+    
 }

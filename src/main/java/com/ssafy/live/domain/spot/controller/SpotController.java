@@ -76,4 +76,15 @@ public class SpotController {
         List<BasicSpotResponseDto> spots = spotService.getBasicSpotsInBoundary(swLat, swLng, neLat, neLng, type);
         return ResponseEntity.ok(spots);
     }
+    
+    @GetMapping("/search")
+    public ResponseEntity<List<BasicSpotResponseDto>> searchSpots(
+    		@RequestParam String keyword,
+            @RequestParam(required = false) Integer type
+
+		){
+        List<BasicSpotResponseDto> spots = spotService.searchSpots(
+                keyword, type);
+            return ResponseEntity.ok(spots);
+        }
 }
