@@ -57,17 +57,6 @@ public class SpotVectorService {
 
     public void storeAllToVector() {
         List<SpotVectorDto> spots = spotDao.selectAllForVector();
-
-        for (SpotVectorDto s : spots) {
-            System.out.println("📝 관광지 정보:");
-            System.out.println("  번호: " + s.no());
-            System.out.println("  이름: " + s.title());
-            System.out.println("  유형: " + s.typeName());
-            System.out.println("  주소: " + s.addr());
-            System.out.println("  동행 요약: " + s.accompanySummary());
-            System.out.println("  여행 동기 요약: " + s.motiveSummary());
-            System.out.println("-------------------------------------------------");
-        }
         List<Document> docs = spots.stream().map(s -> {
             // System.out.println("✅ 벡터화 대상: " + s.no() + " - " + s.title());
 
@@ -94,17 +83,9 @@ public class SpotVectorService {
                     "motive", s.motiveSummary() != null ? s.motiveSummary() : "없음"));
         }).toList();
 
-        System.out.println("📦 생성된 Document 목록:");
-        for (Document doc : docs) {
-            System.out.println("🧾 Content:\n" + doc.getText());
-            System.out.println("🔖 Metadata:");
-            doc.getMetadata().forEach((k, v) -> System.out.println("  " + k + ": " + v));
-            System.out.println("-------------------------------------------------");
-        }
-
-        // System.out.println("✅ Redis 저장 시작 (" + docs.size() + "건)");
-        // vectorStore.add(docs);
-        // System.out.println("✅ 저장 완료");
+        System.out.println("✅ Redis 저장 시작 (" + docs.size() + "건)");
+        vectorStore.add(docs);
+        System.out.println("✅ 저장 완료");
     }
 
 }

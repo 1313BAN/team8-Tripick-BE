@@ -53,7 +53,7 @@ public class AICategoryRecommendServiceImpl implements AICategoryRecommendServic
                     - 자주 방문하는 동행 유형: %s
                     - 주요 여행 동기: %s
 
-                    위 정보를 기반으로 해당 관광지를 추천하는 이유를 간단히 작성해줘.
+                    위 정보를 기반으로 해당 관광지를 추천하는 이유를 40자 이내로 간단히 작성해줘.
                     """.formatted(categoryPrompt, title, addr, type, accompany, motive);
 
             String reason = chatClient.prompt().user(gptPrompt).call().content();

@@ -27,7 +27,7 @@ public class VectorStoreConfig {
                                                 MetadataField.text("addr"),
                                                 MetadataField.tag("accompany"),
                                                 MetadataField.tag("motive"))
-                                .initializeSchema(false)
+                                .initializeSchema(true)
                                 .build();
         }
 }

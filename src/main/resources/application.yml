@@ -25,7 +25,7 @@ spring:
 
   ai:
     openai:
-      api-key:
+      api-key: 
       chat:
         options:
           model: gpt-4o-mini
@@ -34,7 +34,7 @@ spring:
 
     vectorstore:
       redis:
-        initialize-schema: false
+        initialize-schema: true
         index: ssafy-index
         prefix: "ssafy:"
 
