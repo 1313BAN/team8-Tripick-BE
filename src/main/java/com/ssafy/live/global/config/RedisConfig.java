@@ -19,37 +19,37 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class RedisConfig {
 
-    /**
-     * 객체 캐싱용 RedisTemplate 설정
-     * 캐시 데이터 (추천 결과 등) 저장에 사용
-     */
-    @Bean
-    public RedisTemplate<String, Object> objectRedisTemplate(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(connectionFactory);
-        
-        // Key는 String으로 직렬화
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setHashKeySerializer(new StringRedisSerializer());
-        
-        // Value는 JSON으로 직렬화 (Jackson 사용)
-        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
-        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
-        
-        // 설정 적용
-        template.afterPropertiesSet();
-        return template;
-    }
+        /**
+         * 객체 캐싱용 RedisTemplate 설정
+         * 캐시 데이터 (추천 결과 등) 저장에 사용
+         */
+        @Bean
+        public RedisTemplate<String, Object> objectRedisTemplate(RedisConnectionFactory connectionFactory) {
+                RedisTemplate<String, Object> template = new RedisTemplate<>();
+                template.setConnectionFactory(connectionFactory);
 
-    /**
-     * Jackson ObjectMapper 설정
-     * JSON 직렬화/역직렬화 최적화
-     */
-    @Bean
-    @Primary
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper()
-            .registerModule(new JavaTimeModule()) // LocalDateTime 등 처리
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // ISO 8601 포맷 사용
-    }
+                // Key는 String으로 직렬화
+                template.setKeySerializer(new StringRedisSerializer());
+                template.setHashKeySerializer(new StringRedisSerializer());
+
+                // Value는 JSON으로 직렬화 (Jackson 사용)
+                template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+                template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+
+                // 설정 적용
+                template.afterPropertiesSet();
+                return template;
+        }
+
+        /**
+         * Jackson ObjectMapper 설정
+         * JSON 직렬화/역직렬화 최적화
+         */
+        // @Bean
+        // @Primary
+        // public ObjectMapper objectMapper(ObjectMapper defaultMapper) {
+        // defaultMapper.registerModule(new JavaTimeModule());
+        // defaultMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        // return defaultMapper;
+        // }
 }
