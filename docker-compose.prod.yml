@@ -2,3 +2,11 @@ services:
   backend:
     env_file:
       - .env.production
+    environment:
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - REDIS_HOST=${REDIS_HOST}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - JWT_SECRET=${JWT_SECRET}
+      - COOKIE_SECURE=${COOKIE_SECURE}
+      - COOKIE_SAMESITE=${COOKIE_SAMESITE}
