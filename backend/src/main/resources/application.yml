@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: enjoytrip_08
+
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://mysql:3306/trippick
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
+
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: gpt-4o-mini
+          temperature: 0.7
+          max-completion-tokens: 10000
+
+    vectorstore:
+      redis:
+        initialize-schema: true
+        index: ssafy-index
+        prefix: "ssafy:"
+
+mybatis:
+  mapper-locations: classpath:/domain/**/mapper/*.xml
+  type-aliases-package: com.ssafy.live.**.dto
+
+jwt:
+  secret: ${JWT_SECRET}
+
+logging:
+  level:
+    com.ssafy: trace
+    org.springframework.ai.chat.client.advisor: debug
+
+custom:
+  cookie:
+    secure: ${COOKIE_SECURE:false}
+    samesite: ${COOKIE_SAMESITE:Lax}
