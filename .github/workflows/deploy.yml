@@ -22,18 +22,14 @@ jobs:
       - name: Copy files to EC2
         run: |
           ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
-            cd ~/your-project-dir
+            cd ~/team8-Tripick-BE
             git pull origin main
           EOF
-
-      - name: Copy .env file
-        run: |
-          scp .env.production ubuntu@${{ secrets.EC2_HOST }}:~/your-project-dir/.env.production
 
       - name: Build and Deploy with Docker Compose
         run: |
           ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
-            cd ~/your-project-dir
+            cd ~/team8-Tripick-BE
             docker-compose -f docker-compose.yml -f docker-compose.prod.yml down
             docker-compose -f docker-compose.yml -f docker-compose.prod.yml pull
             docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
