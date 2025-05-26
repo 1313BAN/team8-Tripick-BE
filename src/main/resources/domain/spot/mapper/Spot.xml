@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.ssafy.live.domain.spot.dao.SpotDao">
 
@@ -16,6 +14,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="reviewCount" column="review_count" />
     </resultMap>
 
+    <!-- content_type과 조인해서 vector에 넣을 데이터 조회 -->
+    <select id="selectAllForVector" resultType="com.ssafy.live.domain.spot.dto.SpotVectorDto">
+        SELECT s.no, s.title, s.addr, ct.type_name, ( SELECT GROUP_CONCAT(accompany_label ORDER BY
+        cnt DESC SEPARATOR ', ') FROM ( SELECT a.accompany_label, COUNT(*) AS cnt FROM reviews r
+        JOIN users u ON r.user_id = u.id LEFT JOIN accompany a ON u.accompany_code =
+        a.accompany_code WHERE r.no = s.no AND r.rating >= 4 GROUP BY a.accompany_label ORDER BY cnt
+        DESC LIMIT 2 ) AS top_accompany ) AS accompanySummary, ( SELECT GROUP_CONCAT(motive_name
+        ORDER BY cnt DESC SEPARATOR ', ') FROM ( SELECT m.motive_name, COUNT(*) AS cnt FROM reviews
+        r JOIN users u ON r.user_id = u.id JOIN user_tralve_motive um ON um.user_id = u.id JOIN
+        motive m ON m.motive_code = um.motive_code WHERE r.no = s.no AND r.rating >= 4 GROUP BY
+        m.motive_name ORDER BY cnt DESC LIMIT 2 ) AS top_motive ) AS motiveSummary FROM
+        trippick.spots s JOIN trippick.content_type ct ON s.content_type_id = ct.type_id </select>
     <!-- AgeRatingDto ResultMap -->
     <resultMap id="AgeRatingMap" type="com.ssafy.live.domain.spot.dto.AgeRatingDto">
         <result property="twenties" column="twenties" />
@@ -128,7 +138,4 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         ORDER BY average_rating DESC, review_count DESC
         LIMIT 100
     </select>
-    
-    
-
 </mapper>

@@ -35,6 +35,7 @@ public interface SpotDao {
      */
     int deleteSpot(int no);
     
+    List<SpotVectorDto> selectAllForVector();
     /**
      * 경계 내 관광지 기본 정보 조회 (평균평점, 리뷰수 포함)
      */
