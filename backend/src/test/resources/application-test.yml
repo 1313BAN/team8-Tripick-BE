@@ -1,0 +1,9 @@
+spring:
+  ai:
+    vectorstore:
+      redis:
+        initialize-schema: false
+        index: test-index
+        prefix: test
+jwt:
+  secret: this-is-a-very-strong-secret-key-32bytes!!12asda2sdfs31h1

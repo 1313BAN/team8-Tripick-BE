@@ -1,0 +1,40 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main # 운영 브랜치 기준
+
+jobs:
+  deploy:
+    name: Deploy to EC2 instance
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.8.1
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+      - name: Copy files to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+            cd ~/your-project-dir
+            git pull origin main
+          EOF
+
+      - name: Copy .env file
+        run: |
+          scp .env.production ubuntu@${{ secrets.EC2_HOST }}:~/your-project-dir/.env.production
+
+      - name: Build and Deploy with Docker Compose
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+            cd ~/your-project-dir
+            docker-compose -f docker-compose.yml -f docker-compose.prod.yml down
+            docker-compose -f docker-compose.yml -f docker-compose.prod.yml pull
+            docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+          EOF
