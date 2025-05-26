@@ -3,51 +3,16 @@
 
 <mapper namespace="com.ssafy.live.domain.spot.dao.SpotDao">
 
-    <resultMap id="SpotMap" type="com.ssafy.live.domain.spot.dto.SpotDto">
-        <!-- 기본 키 필드 매핑 (프라이머리 키) -->
+    <!-- BasicSpotResponseDto ResultMap -->
+    <resultMap id="BasicSpotMap" type="com.ssafy.live.domain.spot.dto.BasicSpotResponseDto">
         <id property="no" column="no" />
-
-        <!-- 일반 필드 매핑 (property: 자바 객체 필드명, column: DB 컬럼명) -->
         <result property="title" column="title" />
         <result property="contentTypeId" column="content_type_id" />
-        <result property="areaCode" column="area_code" />
-        <result property="siGunGuCode" column="si_gun_gu_code" />
-        <result property="firstImage1" column="first_image1" />
-        <result property="firstImage2" column="first_image2" />
         <result property="latitude" column="latitude" />
         <result property="longitude" column="longitude" />
-        <result property="addr" column="addr" />
-        <result property="homepage" column="homepage" />
-        <result property="overview" column="overview" />
+        <result property="averageRating" column="average_rating" />
+        <result property="reviewCount" column="review_count" />
     </resultMap>
-
-    <!-- 모든 관광지 조회 -->
-    <select id="selectAllSpots" resultMap="SpotMap"> SELECT no, title, content_type_id, area_code,
-        si_gun_gu_code, first_image1, first_image2, latitude, longitude, addr, homepage, overview
-        FROM trippick.spots ORDER BY no </select>
-
-    <!-- 특정 관광지 조회 (no 기준) -->
-    <select id="selectSpotByNo" parameterType="int" resultMap="SpotMap"> SELECT no, title,
-        content_type_id, area_code, si_gun_gu_code, first_image1, first_image2, latitude, longitude,
-        addr, homepage, overview FROM trippick.spots WHERE no = #{no} </select>
-
-    <!-- 관광지 등록 -->
-    <insert id="insertSpot" parameterType="com.ssafy.live.domain.spot.dto.SpotDto"
-        useGeneratedKeys="true" keyProperty="no"> INSERT INTO trippick.spots ( title,
-        content_type_id, area_code, si_gun_gu_code, first_image1, first_image2, latitude, longitude,
-        addr, homepage, overview ) VALUES ( #{title}, #{contentTypeId}, #{areaCode}, #{siGunGuCode},
-        #{firstImage1}, #{firstImage2}, #{latitude}, #{longitude}, #{addr}, #{homepage}, #{overview}
-        ) </insert>
-
-    <!-- 관광지 삭제 -->
-    <delete id="deleteSpot" parameterType="int"> DELETE FROM trippick.spots WHERE no = #{no} </delete>
-
-    <!-- 경계 내 관광지 검색 -->
-    <select id="findInBounds" resultMap="SpotMap" parameterType="map"> SELECT no, title,
-        content_type_id, area_code, si_gun_gu_code, first_image1, first_image2, latitude, longitude,
-        addr, homepage, overview FROM trippick.spots WHERE latitude BETWEEN #{swLat} AND #{neLat}
-        AND longitude BETWEEN #{swLng} AND #{neLng} <if test="type != null"> AND content_type_id =
-        #{type} </if> ORDER BY no LIMIT 300 </select>
 
     <!-- content_type과 조인해서 vector에 넣을 데이터 조회 -->
     <select id="selectAllForVector" resultType="com.ssafy.live.domain.spot.dto.SpotVectorDto">
@@ -61,4 +26,116 @@
         motive m ON m.motive_code = um.motive_code WHERE r.no = s.no AND r.rating >= 4 GROUP BY
         m.motive_name ORDER BY cnt DESC LIMIT 2 ) AS top_motive ) AS motiveSummary FROM
         trippick.spots s JOIN trippick.content_type ct ON s.content_type_id = ct.type_id </select>
+    <!-- AgeRatingDto ResultMap -->
+    <resultMap id="AgeRatingMap" type="com.ssafy.live.domain.spot.dto.AgeRatingDto">
+        <result property="twenties" column="twenties" />
+        <result property="thirties" column="thirties" />
+        <result property="forties" column="forties" />
+        <result property="fifties" column="fifties" />
+        <result property="sixties" column="sixties" />
+    </resultMap>
+
+    <!-- 특정 관광지의 기본 정보 조회 (평균평점, 리뷰수 포함) -->
+    <select id="selectBasicSpotByNo" parameterType="int" resultMap="BasicSpotMap">
+        SELECT 
+            s.no,
+            s.title,
+            s.content_type_id,
+            s.latitude,
+            s.longitude,
+            COALESCE(AVG(r.rating), 0) as average_rating,
+            COUNT(r.review_id) as review_count
+        FROM spots s
+        LEFT JOIN reviews r ON s.no = r.no
+        WHERE s.no = #{no}
+        GROUP BY s.no, s.title, s.content_type_id, s.latitude, s.longitude
+    </select>
+
+    <!-- 특정 관광지의 연령대별 평점 조회 -->
+    <select id="selectAgeRatingsByNo" parameterType="int" resultMap="AgeRatingMap">
+        SELECT 
+            COALESCE(AVG(CASE WHEN u.age BETWEEN 20 AND 29 THEN r.rating END), 0) as twenties,
+            COALESCE(AVG(CASE WHEN u.age BETWEEN 30 AND 39 THEN r.rating END), 0) as thirties,
+            COALESCE(AVG(CASE WHEN u.age BETWEEN 40 AND 49 THEN r.rating END), 0) as forties,
+            COALESCE(AVG(CASE WHEN u.age BETWEEN 50 AND 59 THEN r.rating END), 0) as fifties,
+            COALESCE(AVG(CASE WHEN u.age >= 60 THEN r.rating END), 0) as sixties
+        FROM reviews r
+        JOIN users u ON r.user_id = u.id
+        WHERE r.no = #{no}
+    </select>
+
+    <!-- 특정 관광지에서 가장 인기있는 동행타입 조회 -->
+    <select id="selectMostPopularAccompanyTypeByNo" parameterType="int" resultType="string">
+        SELECT a.accompany_label
+        FROM reviews r
+        JOIN users u ON r.user_id = u.id
+        JOIN accompany a ON u.accompany_code = a.accompany_code
+        WHERE r.no = #{no}
+        GROUP BY a.accompany_code, a.accompany_label
+        ORDER BY COUNT(*) DESC
+        LIMIT 1
+    </select>
+
+    <!-- 특정 관광지에서 가장 인기있는 모티브 조회 -->
+    <select id="selectMostPopularMotiveByNo" parameterType="int" resultType="string">
+        SELECT m.motive_name
+        FROM reviews r
+        JOIN users u ON r.user_id = u.id
+        JOIN user_tralve_motive utm ON u.id = utm.user_id
+        JOIN motive m ON utm.motive_code = m.motive_code
+        WHERE r.no = #{no}
+        GROUP BY m.motive_code, m.motive_name
+        ORDER BY COUNT(*) DESC
+        LIMIT 1
+    </select>
+
+    <!-- 관광지 삭제 -->
+    <delete id="deleteSpot" parameterType="int">
+        DELETE FROM spots
+        WHERE no = #{no}
+    </delete>
+
+    <!-- 경계 내 관광지 기본 정보 조회 (평균평점, 리뷰수 포함) -->
+    <select id="selectBasicSpotsInBoundary" resultMap="BasicSpotMap" parameterType="map">
+        SELECT 
+            s.no,
+            s.title,
+            s.content_type_id,
+            s.latitude,
+            s.longitude,
+            COALESCE(AVG(r.rating), 0) as average_rating,
+            COUNT(r.review_id) as review_count
+        FROM spots s
+        LEFT JOIN reviews r ON s.no = r.no
+        WHERE s.latitude BETWEEN #{swLat} AND #{neLat}
+        AND s.longitude BETWEEN #{swLng} AND #{neLng}
+        <if test="type != null">
+            AND s.content_type_id = #{type}
+        </if>
+        GROUP BY s.no, s.title, s.content_type_id, s.latitude, s.longitude
+        ORDER BY s.no
+        LIMIT 300
+    </select>
+    
+        <!-- 관광지 검색 (이름, 주소 기반) -->
+    <select id="searchSpots" resultMap="BasicSpotMap" parameterType="map">
+        SELECT 
+            s.no,
+            s.title,
+            s.content_type_id,
+            s.latitude,
+            s.longitude,
+            COALESCE(AVG(r.rating), 0) as average_rating,
+            COUNT(r.review_id) as review_count
+        FROM spots s
+        LEFT JOIN reviews r ON s.no = r.no
+        WHERE (s.title LIKE CONCAT('%', #{keyword}, '%') 
+               OR s.addr LIKE CONCAT('%', #{keyword}, '%'))
+        <if test="type != null">
+            AND s.content_type_id = #{type}
+        </if>
+        GROUP BY s.no, s.title, s.content_type_id, s.latitude, s.longitude
+        ORDER BY average_rating DESC, review_count DESC
+        LIMIT 100
+    </select>
 </mapper>

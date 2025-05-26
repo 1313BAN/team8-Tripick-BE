@@ -1,6 +1,6 @@
 package com.ssafy.live.domain.review.service;
 
-import java.util.List;
+import java.util.List; 
 import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
@@ -10,11 +10,9 @@ import com.ssafy.live.domain.review.dao.ReviewDao;
 import com.ssafy.live.domain.review.dto.ReviewRequestDto;
 import com.ssafy.live.domain.review.dto.ReviewResponseDto;
 import com.ssafy.live.domain.spot.dao.SpotDao;
-import com.ssafy.live.domain.spot.dto.SpotDto;
-import com.ssafy.live.domain.spot.service.SpotService; 
+import com.ssafy.live.domain.spot.dto.BasicSpotResponseDto;
 import com.ssafy.live.domain.user.dao.UserDao;
 import com.ssafy.live.domain.user.dto.UserDto;
-import com.ssafy.live.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,7 +35,7 @@ public class ReviewServiceImpl implements ReviewService {
         }
 
         // 관광지 존재 확인
-        SpotDto spot = spotDao.selectSpotByNo(reviewRequestDto.getNo());
+        BasicSpotResponseDto spot = spotDao.selectBasicSpotByNo(reviewRequestDto.getNo());
         if (spot == null) {
             throw new NoSuchElementException("존재하지 않는 관광지입니다.");
         }
@@ -156,7 +154,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public List<ReviewResponseDto> getReviewsBySpotNo(int spotNo) {
         // 관광지 존재 확인
-        SpotDto spot = spotDao.selectSpotByNo(spotNo);
+        BasicSpotResponseDto spot = spotDao.selectBasicSpotByNo(spotNo);
         if (spot == null) {
             throw new NoSuchElementException("존재하지 않는 관광지입니다.");
         }
