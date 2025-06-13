@@ -16,12 +16,22 @@ services:
       - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   redis:
-    image: redis:alpine
+    image: redis/redis-stack-server:latest
     container_name: redis
     ports:
       - "6379:6379"
     volumes:
       - redis-data:/data
+
+  ollama:
+    build:
+      context: ./ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-models:/root/.ollama
+    tty: true
 
   backend:
     build:
@@ -32,7 +42,17 @@ services:
     depends_on:
       - mysql
       - redis
+      - ollama
+    environment:
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: ${REDIS_HOST}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      JWT_SECRET: ${JWT_SECRET}
+      COOKIE_SECURE: ${COOKIE_SECURE}
+      COOKIE_SAMESITE: ${COOKIE_SAMESITE}
 
 volumes:
   mysql-data:
   redis-data:
+  ollama-models:

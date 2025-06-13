@@ -29,11 +29,11 @@ public class AICategoryRecommendServiceImpl implements AICategoryRecommendServic
         List<Document> similarSpots = vectorStore.similaritySearch(
                 SearchRequest.builder()
                         .query(categoryPrompt)
-                        .topK(5)
+                        .topK(3)
                         .build());
 
         // 각 관광지에 대해 GPT에게 추천 이유 요청
-        return similarSpots.stream().map(doc -> {
+        return similarSpots.parallelStream().map(doc -> {
             var meta = doc.getMetadata();
 
             String noStr = String.valueOf(meta.getOrDefault("no", "-1")); // 기본값: -1
@@ -55,10 +55,12 @@ public class AICategoryRecommendServiceImpl implements AICategoryRecommendServic
                     - 자주 방문하는 동행 유형: %s
                     - 주요 여행 동기: %s
 
-                    위 정보를 기반으로 해당 관광지를 추천하는 이유를 40자 이내로 간단히 작성해줘.
+                    위 정보를 기반으로 해당 관광지를 추천하는 이유를 20자 이내로 한글로 간단히 작성해줘.
                     """.formatted(categoryPrompt, title, addr, type, accompany, motive);
 
+            System.out.println("Thread: " + Thread.currentThread().getName() + " | 요청 시작");
             String reason = chatClient.prompt().user(gptPrompt).call().content();
+            System.out.println("Thread: " + Thread.currentThread().getName() + " | 응답 완료");
 
             return new AICategoryRecommendResponse(
                     no, title, addr, type, accompany, motive, reason);
