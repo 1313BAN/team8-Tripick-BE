@@ -16,10 +16,11 @@ services:
       - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   redis:
-    image: redis/redis-stack-server:latest
+    image: ${REDIS_IMAGE}
     container_name: redis
     ports:
       - "6379:6379"
+      - "8001:8001"  # Redis Insight용 (stack만 해당)
     volumes:
       - redis-data:/data
 
@@ -47,7 +48,6 @@ services:
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
       REDIS_HOST: ${REDIS_HOST}
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
       JWT_SECRET: ${JWT_SECRET}
       COOKIE_SECURE: ${COOKIE_SECURE}
       COOKIE_SAMESITE: ${COOKIE_SAMESITE}
