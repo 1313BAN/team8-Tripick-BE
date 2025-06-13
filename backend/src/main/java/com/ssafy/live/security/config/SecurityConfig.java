@@ -56,6 +56,7 @@ public class SecurityConfig {
                                                                 "/api/spots/**",
                                                                 "/api/public/**")
                                                 .permitAll()
+                                                .requestMatchers("/admin/**").hasRole("ADMIN")
                                                 .anyRequest().authenticated())
                                 .exceptionHandling(ex -> ex
                                                 .authenticationEntryPoint(entryPoint)

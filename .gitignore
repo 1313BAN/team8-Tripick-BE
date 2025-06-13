@@ -34,10 +34,16 @@ Thumbs.db
 logs/
 
 # === Environment / Config ===
-.env*
+.env
+.env.*
+!.env.prod.example
+!.env.dev.example
+
 application-local.yml
 application-dev.yml
+
 # 기본 application.yml은 포함 (Spring 공통 설정)
 !backend/src/main/resources/application.yml
+
 # === Documentation ===
 HELP.md
