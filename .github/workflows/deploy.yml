@@ -28,6 +28,7 @@ jobs:
             echo "DB_USERNAME=${{ secrets.ENV_DB_USERNAME }}" > .env.prod
             echo "DB_PASSWORD=${{ secrets.ENV_DB_PASSWORD }}" >> .env.prod
             echo "REDIS_HOST=${{ secrets.ENV_REDIS_HOST }}" >> .env.prod
+            echo "REDIS_IMAGE=${{ secrets.REDIS_IMAGE }}" >> .env.prod
             echo "JWT_SECRET=${{ secrets.ENV_JWT_SECRET }}" >> .env.prod
             echo "COOKIE_SECURE=${{ secrets.ENV_COOKIE_SECURE }}" >> .env.prod
             echo "COOKIE_SAMESITE=${{ secrets.ENV_COOKIE_SAMESITE }}" >> .env.prod
