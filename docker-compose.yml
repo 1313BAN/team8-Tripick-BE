@@ -41,16 +41,20 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - mysql
       - redis
-      - ollama
     environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
       REDIS_HOST: ${REDIS_HOST}
       JWT_SECRET: ${JWT_SECRET}
       COOKIE_SECURE: ${COOKIE_SECURE}
       COOKIE_SAMESITE: ${COOKIE_SAMESITE}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL}
+      OLLAMA_CHAT_MODEL: ${OLLAMA_CHAT_MODEL}
+      OLLAMA_EMBED_MODEL: ${OLLAMA_EMBED_MODEL}
+
 
 volumes:
   mysql-data:
