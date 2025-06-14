@@ -28,17 +28,20 @@ jobs:
             echo "DB_USERNAME=${{ secrets.ENV_DB_USERNAME }}" > .env.prod
             echo "DB_PASSWORD=${{ secrets.ENV_DB_PASSWORD }}" >> .env.prod
             echo "REDIS_HOST=${{ secrets.ENV_REDIS_HOST }}" >> .env.prod
-            echo "REDIS_IMAGE=${{ secrets.REDIS_IMAGE }}" >> .env.prod
+            echo "REDIS_IMAGE=${{ secrets.ENV_REDIS_IMAGE }}" >> .env.prod
             echo "JWT_SECRET=${{ secrets.ENV_JWT_SECRET }}" >> .env.prod
             echo "COOKIE_SECURE=${{ secrets.ENV_COOKIE_SECURE }}" >> .env.prod
             echo "COOKIE_SAMESITE=${{ secrets.ENV_COOKIE_SAMESITE }}" >> .env.prod
+            echo "OLLAMA_BASE_URL=${{ secrets.ENV_OLLAMA_BASE_URL }}" >> .env.prod
+            echo "OLLAMA_CHAT_MODEL=${{ secrets.ENV_OLLAMA_CHAT_MODEL }}" >> .env.prod
+            echo "OLLAMA_EMBED_MODEL=${{ secrets.ENV_OLLAMA_EMBED_MODEL }}" >> .env.prod
           EOF
 
-      - name: Build and Deploy with Docker Compose
+      - name: Build and Deploy Spring Boot + Redis only
         run: |
           ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} <<EOF
             cd ~/team8-Tripick-BE
             docker-compose --env-file .env.prod down
-            docker-compose --env-file .env.prod pull
-            docker-compose --env-file .env.prod up -d --build
+            docker-compose --env-file .env.prod pull backend redis
+            docker-compose --env-file .env.prod up -d --build backend redis
           EOF

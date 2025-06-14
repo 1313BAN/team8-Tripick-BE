@@ -13,7 +13,7 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://mysql:3306/trippick
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/trippick
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
@@ -26,7 +26,7 @@ spring:
     model:
       embedding: ollama  # 임베딩 모델 유형 지정
     ollama:
-      base-url: http://ollama:11434
+      base-url: ${OLLAMA_BASE_URL}
       chat:
         options:
           model: mistral
