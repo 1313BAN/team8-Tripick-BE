@@ -27,7 +27,7 @@ jobs:
 
             echo "DB_HOST=${{ secrets.ENV_DB_HOST }}" > .env.prod
             echo "DB_PORT=${{ secrets.ENV_DB_PORT }}" >> .env.prod
-            echo "DB_USERNAME=${{ secrets.ENV_DB_USERNAME }}" > .env.prod
+            echo "DB_USERNAME=${{ secrets.ENV_DB_USERNAME }}" >> .env.prod
             echo "DB_PASSWORD=${{ secrets.ENV_DB_PASSWORD }}" >> .env.prod
             echo "REDIS_HOST=${{ secrets.ENV_REDIS_HOST }}" >> .env.prod
             echo "REDIS_IMAGE=${{ secrets.ENV_REDIS_IMAGE }}" >> .env.prod
