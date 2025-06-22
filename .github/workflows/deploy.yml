@@ -26,6 +26,7 @@ jobs:
       - name: Run DAO Tests
         run: |
           cd backend
+          chmod +x mvnw
           ./mvnw -Dtest=RecommendationDaoTest,ReviewDaoTest,SpotDaoTest,UserIntegrationTest test
 
   deploy:
