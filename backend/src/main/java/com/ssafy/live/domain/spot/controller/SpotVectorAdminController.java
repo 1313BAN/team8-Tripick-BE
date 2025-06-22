@@ -2,12 +2,18 @@ package com.ssafy.live.domain.spot.controller;
 
 import com.ssafy.live.domain.spot.service.SpotVectorService;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admin/vector")
 @RequiredArgsConstructor
+@ConditionalOnMissingBean(VectorStore.class)
+@Profile("!test")
 public class SpotVectorAdminController {
 
     private final SpotVectorService spotVectorService;

@@ -1,13 +1,13 @@
-
-
 package com.ssafy.live.domain.review.dao;
 
+import com.ssafy.live.common.AbstractIntegrationTest;
 import com.ssafy.live.domain.review.dto.ReviewResponseDto;
-import com.ssafy.live.domain.user.dto.UserDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -16,8 +16,10 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Transactional
-public class ReviewDaoTest {
+@ActiveProfiles("test")
+public class ReviewDaoTest extends AbstractIntegrationTest {
 
     @Autowired
     private ReviewDao reviewDao;
@@ -124,12 +126,12 @@ public class ReviewDaoTest {
         assertThat(userReviews).isNotNull();
         assertThat(userReviews).isNotEmpty();
         assertThat(userReviews.stream()
-            .anyMatch(r -> r.getReviewId() == newReview.getReviewId()))
-            .isTrue();
+                .anyMatch(r -> r.getReviewId() == newReview.getReviewId()))
+                .isTrue();
     }
 
     @Test
-    @DisplayName("관광지 ID로 리뷰 목록 조회 테스트")  
+    @DisplayName("관광지 ID로 리뷰 목록 조회 테스트")
     void selectReviewsBySpotNo() {
         // given
         ReviewResponseDto newReview = createSampleReview();
@@ -143,8 +145,8 @@ public class ReviewDaoTest {
         assertThat(spotReviews).isNotNull();
         assertThat(spotReviews).isNotEmpty();
         assertThat(spotReviews.stream()
-            .anyMatch(r -> r.getReviewId() == newReview.getReviewId()))
-            .isTrue();
+                .anyMatch(r -> r.getReviewId() == newReview.getReviewId()))
+                .isTrue();
     }
 
     @Test
@@ -176,7 +178,6 @@ public class ReviewDaoTest {
         review.setRating(4.0); // Double 타입
         review.setReviewLike(0);
         review.setCreatedAt(LocalDateTime.now());
-        
 
         return review;
     }

@@ -1,9 +1,48 @@
+server:
+  port: 8080
+  address: 0.0.0.0
+
 spring:
-  ai:
+  application:
+    name: enjoytrip_08
+
+  autoconfigure:
+    exclude:
+      - org.springframework.ai.autoconfigure.vectorstore.redis.RedisVectorStoreAutoConfiguration
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  sql:
+    init:
+      mode: always # <-- 여기가 핵심!
+      encoding: UTF-8
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
+
+  # data:
+  #   redis:
+  #     host: localhost
+  #     port: 6379
+
+mybatis:
+  mapper-locations: classpath:/domain/**/mapper/*.xml
+  type-aliases-package: com.ssafy.live.**.dto
+
+jwt:
+  secret: this-is-a-very-strong-jwt-secret-key-123456
+
+logging:
+  level:
+    com.ssafy: debug
+    org.springframework.ai.chat.client.advisor: warn
+
+custom:
+  cookie:
+    secure: false
+    samesite: Lax
+
+ai:
     vectorstore:
       redis:
         initialize-schema: false
-        index: test-index
-        prefix: test
-jwt:
-  secret: this-is-a-very-strong-secret-key-32bytes!!12asda2sdfs31h1

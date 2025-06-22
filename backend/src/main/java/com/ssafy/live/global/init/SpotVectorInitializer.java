@@ -10,7 +10,6 @@
 
 // @Component
 // @RequiredArgsConstructor
-// @Profile("!test")
 // public class SpotVectorInitializer {
 
 //     private final SpotVectorService spotVectorService;

@@ -41,7 +41,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <!-- 리뷰 저장 -->
     <insert id="insertReview" parameterType="com.ssafy.live.domain.review.dto.ReviewResponseDto" useGeneratedKeys="true" keyProperty="reviewId">
-        INSERT INTO trippick.reviews (
+        INSERT INTO reviews (
             user_id, 
             no, 
             rating, 
@@ -64,7 +64,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <!-- 리뷰 수정 -->
     <update id="updateReview" parameterType="com.ssafy.live.domain.review.dto.ReviewResponseDto">
-        UPDATE trippick.reviews 
+        UPDATE reviews 
         SET 
             rating = #{rating}, 
             title = #{title}, 
@@ -75,7 +75,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <!-- 리뷰 삭제 -->
     <delete id="deleteReview" parameterType="int">
-        DELETE FROM trippick.reviews
+        DELETE FROM reviews
         WHERE review_id = #{reviewId}
     </delete>
     
@@ -103,9 +103,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             u.age,
             u.created_at as user_created_at,
             u.updated_at as user_updated_at
-        FROM trippick.reviews r
-        JOIN trippick.users u ON r.user_id = u.id
-        JOIN trippick.spots s ON r.no = s.no
+        FROM reviews r
+        JOIN users u ON r.user_id = u.id
+        JOIN spots s ON r.no = s.no
         WHERE r.review_id = #{reviewId}
     </select>
     
@@ -133,9 +133,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             u.age,
             u.created_at as user_created_at,
             u.updated_at as user_updated_at
-        FROM trippick.reviews r
-        JOIN trippick.users u ON r.user_id = u.id
-        JOIN trippick.spots s ON r.no = s.no
+        FROM reviews r
+        JOIN users u ON r.user_id = u.id
+        JOIN spots s ON r.no = s.no
         WHERE r.user_id = #{userId}
         ORDER BY r.created_at DESC
     </select>
@@ -164,9 +164,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             u.age,
             u.created_at as user_created_at,
             u.updated_at as user_updated_at
-        FROM trippick.reviews r
-        JOIN trippick.users u ON r.user_id = u.id
-        JOIN trippick.spots s ON r.no = s.no
+        FROM reviews r
+        JOIN users u ON r.user_id = u.id
+        JOIN spots s ON r.no = s.no
         WHERE r.no = #{spotNo}
         ORDER BY r.created_at DESC
     </select>
@@ -174,14 +174,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <!-- 리뷰 작성자 ID 조회 -->
     <select id="selectReviewWriterId" parameterType="int" resultType="int">
         SELECT user_id
-        FROM trippick.reviews
+        FROM reviews
         WHERE review_id = #{reviewId}
     </select>
     
     <!-- 관광지의 평균 별점 조회 -->
     <select id="selectAverageRatingBySpotNo" parameterType="int" resultType="double">
         SELECT AVG(rating)
-        FROM trippick.reviews
+        FROM reviews
         WHERE no = #{spotNo}
     </select>
 </mapper>
