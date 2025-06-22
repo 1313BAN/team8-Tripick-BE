@@ -1,5 +1,6 @@
 package com.ssafy.live.domain.user.controller;
 
+import com.ssafy.live.common.AbstractIntegrationTest;
 import com.ssafy.live.domain.user.dto.LoginRequestDto;
 import com.ssafy.live.domain.user.dto.SignupRequestDto;
 import com.ssafy.live.domain.user.dto.UserDetailDto;
@@ -10,6 +11,7 @@ import org.springframework.http.*;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.io.IOException;
 import java.util.Map;
@@ -18,7 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class UserIntegrationTest {
+@ActiveProfiles("test")
+public class UserIntegrationTest extends AbstractIntegrationTest {
 
     @LocalServerPort
     int port;
